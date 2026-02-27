@@ -9,30 +9,60 @@ AI-powered content generator for Seventh-day Adventist churches.
 - Prayer points
 - Church announcements
 
-## Deployment
+## Quick Start (Local)
 
-### Dokploy
-1. Push this code to GitHub/GitLab
-2. In Dokploy, create a new project
-3. Add repository and configure:
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Port: `3000`
-   - Install Command: `npm install`
-
-### Environment Variables
-Set these in your Dokploy environment:
-- `OPENAI_API_URL` - Your AI endpoint (e.g., `https://aiproxy.spidmax.win/claude-kiro-oauth/v1`)
-- `AI_API_KEY` - Your API key
-
-## Local Development
 ```bash
-npm install
-npm run dev
+# Clone the repository
+git clone https://github.com/jawg-zz/sda-ai-content.git
+cd sda-ai-content
+
+# Create .env file
+cp .env.example .env
+# Edit .env with your API credentials
+
+# Run with Docker Compose
+docker compose up -d
 ```
 
+## Deployment on Dokploy
+
+### Option 1: Docker Compose (Recommended)
+1. Push code to GitHub (already done)
+2. In Dokploy, create a new project
+3. Select "Docker Compose" as the deployment type
+4. Connect your GitHub repository
+5. Configure:
+   - Docker Compose File: `docker-compose.yml`
+   - Environment Variables:
+     - `OPENAI_API_URL` = `https://aiproxy.spidmax.win/claude-kiro-oauth/v1`
+     - `AI_API_KEY` = `spidmax`
+6. Deploy
+
+### Option 2: Docker
+1. Build the image:
+   ```bash
+   docker build -t sda-content-generator .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 \
+     -e OPENAI_API_URL=https://aiproxy.spidmax.win/claude-kiro-oauth/v1 \
+     -e AI_API_KEY=spidmax \
+     sda-content-generator
+   ```
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_URL` | Your AI API endpoint | Yes |
+| `AI_API_KEY` | Your API key | Yes |
+
 ## Tech Stack
-- Next.js 15
+- Next.js 15 (Standalone)
 - React 19
-- Tailwind CSS (optional)
-- OpenAI-compatible API
+- Node.js 22
+- Docker
+
+## License
+MIT

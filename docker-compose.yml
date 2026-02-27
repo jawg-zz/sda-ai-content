@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  sda-content-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - OPENAI_API_URL=${OPENAI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/generate"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
+networks:
+  default:
+    name: dokploy-network
+    external: true
