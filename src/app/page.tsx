@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { pdf } from "@react-pdf/renderer";
+import { PDFDocument } from "./components/PDFDocument";
 
 interface Heading {
   id: string;
@@ -96,8 +98,26 @@ export default function Home() {
     }
   };
 
-  const handleDownload = (format: "md" | "txt") => {
+  const handleDownload = async (format: "md" | "txt" | "pdf") => {
     if (!output) return;
+    
+    if (format === "pdf") {
+      const blob = await pdf(
+        <PDFDocument 
+          title={output.title} 
+          content={output.content} 
+          contentType={contentType}
+        />
+      ).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${output.title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    
     const blob = new Blob([output.content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -364,6 +384,13 @@ export default function Home() {
                     title="Download as Text"
                   >
                     📥 TXT
+                  </button>
+                  <button 
+                    className="action-btn pdf-btn"
+                    onClick={() => handleDownload("pdf")}
+                    title="Download as PDF"
+                  >
+                    📄 PDF
                   </button>
                 </div>
               </div>

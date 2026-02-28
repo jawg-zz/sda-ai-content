@@ -809,3 +809,12 @@ footer {
 .output-body h3 {
   font-size: 1.2rem;
 }
+
+/* PDF Button */
+.pdf-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.pdf-btn:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+}
