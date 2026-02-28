@@ -253,8 +253,7 @@ export default function Home() {
 
   // Handle scripture click - fetch verse from Bible API
   const handleScriptureClick = async (reference: string) => {
-    // Parse reference - handle more patterns like "1 John 3:16", "Psalm 23:1-4"
-    // Match patterns like: John 3:16, 1 John 3:16, Psalm 23:1, Romans 12:1-5
+    // Parse reference - handle verse ranges like "John 3:16-18", "1 John 3:16-20"
     const match = reference.trim().match(/^(\d+?\s+)?([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+):(\d+)(?:-(\d+))?$/i);
     if (!match) {
       console.log("Could not parse reference:", reference);
@@ -263,19 +262,42 @@ export default function Home() {
     
     const [, prefix, book, chapter, verseStart, verseEnd] = match;
     const bookName = prefix ? prefix.trim() + " " + book : book;
+    const startVerse = parseInt(verseStart);
+    const endVerse = verseEnd ? parseInt(verseEnd) : startVerse;
     
     try {
-      const response = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(bookName)}&chapter=${chapter}&verse=${verseStart}`);
-      const data = await response.json();
-      if (data.text) {
-        setClickedScripture({ reference: data.reference, text: data.text });
+      // If it's a range, fetch each verse and combine
+      if (verseEnd && endVerse > startVerse) {
+        let allVerses = [];
+        for (let v = startVerse; v <= endVerse; v++) {
+          const res = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(bookName)}&chapter=${chapter}&verse=${v}`);
+          const data = await res.json();
+          if (data.text) {
+            allVerses.push({ verse: v, text: data.text });
+          }
+        }
+        
+        if (allVerses.length > 0) {
+          const combinedText = allVerses.map(v => `v${v.verse} ${v.text}`).join('\n\n');
+          setClickedScripture({ 
+            reference: `${bookName} ${chapter}:${verseStart}-${verseEnd}`, 
+            text: combinedText 
+          });
+        }
       } else {
-        // Try alternative format
-        const altBook = bookName.replace(/\s+/g, '%20');
-        const altRes = await fetch(`/api/bible?action=verse&book=${altBook}&chapter=${chapter}&verse=${verseStart}`);
-        const altData = await altRes.json();
-        if (altData.text) {
-          setClickedScripture({ reference: altData.reference, text: altData.text });
+        // Single verse
+        const response = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(bookName)}&chapter=${chapter}&verse=${verseStart}`);
+        const data = await response.json();
+        if (data.text) {
+          setClickedScripture({ reference: data.reference, text: data.text });
+        } else {
+          // Try alternative format
+          const altBook = bookName.replace(/\s+/g, '%20');
+          const altRes = await fetch(`/api/bible?action=verse&book=${altBook}&chapter=${chapter}&verse=${verseStart}`);
+          const altData = await altRes.json();
+          if (altData.text) {
+            setClickedScripture({ reference: altData.reference, text: altData.text });
+          }
         }
       }
     } catch (error) {
