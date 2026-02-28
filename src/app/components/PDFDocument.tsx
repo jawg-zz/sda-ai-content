@@ -1,60 +1,174 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
 
-// Use standard PDF fonts
+// Register fonts
+Font.register({
+  family: 'Helvetica',
+  fonts: [
+    { src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2', fontWeight: 'normal' },
+    { src: 'https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc9.woff2', fontWeight: 'bold' },
+  ]
+});
+
 const styles = StyleSheet.create({
+  // Page layout
   page: {
-    padding: 50,
+    padding: 0,
     backgroundColor: '#FFFFFF',
+    fontFamily: 'Helvetica',
   },
+  
+  // Cover page
+  coverPage: {
+    flex: 1,
+    backgroundColor: '#2D5016',
+    padding: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  coverTitle: {
+    fontSize: 36,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  coverSubtitle: {
+    fontSize: 18,
+    color: '#D4A84B',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  coverMeta: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    textAlign: 'center',
+  },
+  coverDivider: {
+    width: 100,
+    height: 3,
+    backgroundColor: '#D4A84B',
+    marginVertical: 30,
+  },
+  
+  // Content page
+  contentPage: {
+    padding: 50,
+  },
+  
+  // Header
   header: {
     marginBottom: 30,
     borderBottomWidth: 2,
     borderBottomColor: '#D4A84B',
-    paddingBottom: 20,
+    paddingBottom: 15,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   title: {
-    fontSize: 28,
-    fontFamily: 'Helvetica-Bold',
+    fontSize: 26,
     color: '#2D5016',
-    marginBottom: 5,
+    fontWeight: 'bold',
+    flex: 1,
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666666',
+    marginTop: 5,
   },
+  date: {
+    fontSize: 10,
+    color: '#999999',
+  },
+  
+  // Table of Contents
+  toc: {
+    marginBottom: 30,
+    padding: 20,
+    backgroundColor: '#FDF8F0',
+    borderRadius: 8,
+  },
+  tocTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2D5016',
+    marginBottom: 15,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D4A84B',
+  },
+  tocItem: {
+    fontSize: 11,
+    color: '#444444',
+    marginBottom: 8,
+    paddingLeft: 10,
+  },
+  tocItemMain: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1E3A0F',
+    marginBottom: 6,
+  },
+  tocPageNum: {
+    position: 'absolute',
+    right: 0,
+    fontSize: 10,
+    color: '#888888',
+  },
+  
+  // Sections
   section: {
-    marginBottom: 20,
+    marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
+    fontWeight: 'bold',
     color: '#2D5016',
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4A84B',
+  },
+  sectionTitleSmall: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1E3A0F',
     marginBottom: 10,
+    marginTop: 15,
     paddingBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E0D8',
   },
-  sectionTitleSmall: {
-    fontSize: 14,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1E3A0F',
-    marginBottom: 8,
-    marginTop: 15,
-  },
+  
+  // Content
   paragraph: {
     fontSize: 11,
-    lineHeight: 1.6,
+    lineHeight: 1.7,
     color: '#2C2C2C',
-    marginBottom: 8,
+    marginBottom: 12,
+    textAlign: 'justify',
   },
   listItem: {
     fontSize: 11,
-    lineHeight: 1.6,
+    lineHeight: 1.7,
     color: '#2C2C2C',
-    marginBottom: 4,
-    paddingLeft: 10,
+    marginBottom: 6,
+    paddingLeft: 5,
+    flexDirection: 'row',
   },
+  bullet: {
+    width: 15,
+    color: '#D4A84B',
+    fontWeight: 'bold',
+  },
+  listItemText: {
+    flex: 1,
+  },
+  
+  // Special formatting
   bold: {
     fontWeight: 'bold',
     color: '#1E3A0F',
@@ -67,47 +181,93 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#8B4513',
     backgroundColor: '#FDF8F0',
-    padding: 5,
+    padding: 10,
+    marginVertical: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#D4A84B',
   },
+  verse: {
+    fontSize: 10,
+    color: '#8B4513',
+    marginBottom: 8,
+  },
+  
+  // Callout boxes
+  callout: {
+    backgroundColor: '#F0F7F0',
+    padding: 15,
+    marginVertical: 10,
+    borderRadius: 6,
+    borderLeftWidth: 4,
+    borderLeftColor: '#4A7C23',
+  },
+  calloutTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#2D5016',
+    marginBottom: 8,
+  },
+  calloutText: {
+    fontSize: 10,
+    lineHeight: 1.6,
+    color: '#444444',
+  },
+  
+  // Prayer box
+  prayer: {
+    backgroundColor: '#FDF8F0',
+    padding: 20,
+    marginVertical: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D4A84B',
+  },
+  prayerTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#8B4513',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  prayerText: {
+    fontSize: 11,
+    lineHeight: 1.8,
+    color: '#2C2C2C',
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+  
+  // Footer
   footer: {
     position: 'absolute',
     bottom: 30,
     left: 50,
     right: 50,
-    textAlign: 'center',
-    fontSize: 9,
-    color: '#888888',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: '#E5E0D8',
-    paddingTop: 10,
   },
-  // Table of Contents styles
-  toc: {
-    marginBottom: 25,
-    padding: 15,
-    backgroundColor: '#FDF8F0',
-    borderRadius: 4,
+  footerText: {
+    fontSize: 9,
+    color: '#888888',
   },
-  tocTitle: {
-    fontSize: 14,
-    fontFamily: 'Helvetica-Bold',
-    color: '#2D5016',
-    marginBottom: 10,
-    paddingBottom: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: '#D4A84B',
+  footerPage: {
+    fontSize: 9,
+    color: '#888888',
   },
-  tocItem: {
-    fontSize: 10,
-    color: '#2C2C2C',
-    marginBottom: 4,
-    paddingLeft: 10,
-  },
-  tocItemMain: {
-    fontSize: 11,
-    fontFamily: 'Helvetica-Bold',
-    color: '#1E3A0F',
-    marginBottom: 4,
+  
+  // Page numbers
+  pageNumber: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 9,
+    color: '#AAAAAA',
   },
 });
 
@@ -118,7 +278,7 @@ interface Heading {
 }
 
 interface ContentItem {
-  type: 'paragraph' | 'heading' | 'subheading' | 'list' | 'scripture';
+  type: 'paragraph' | 'heading' | 'subheading' | 'list' | 'scripture' | 'callout' | 'prayer';
   content: string;
 }
 
@@ -136,11 +296,13 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
   const headings: Heading[] = [];
   let headingCounter = 0;
   
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
+    
     if (!trimmed) continue;
     
-    if (trimmed.startsWith('# ')) {
+    if (trimmed.startsWith('# ') && !trimmed.startsWith('##')) {
       headingCounter++;
       const text = trimmed.substring(2);
       const id = `heading-${headingCounter}`;
@@ -160,8 +322,13 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
       items.push({ type: 'subheading', content: text });
     } else if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
       items.push({ type: 'list', content: trimmed.substring(2) });
-    } else if (/^[A-Z][a-z]+\s+\d+:\d+/.test(trimmed)) {
-      items.push({ type: 'scripture', content: trimmed });
+    } else if (trimmed.toLowerCase().includes('prayer') && trimmed.length < 50) {
+      // Check if next few lines are prayer content
+      items.push({ type: 'prayer', content: trimmed });
+    } else if (/^[*_]{1,3}[A-Z][a-z]+\s+\d+:\d+/.test(trimmed)) {
+      items.push({ type: 'scripture', content: trimmed.replace(/^[*_]{1,3}/, '').replace(/[*_]{1,3}$/, '') });
+    } else if (trimmed.startsWith('**') && trimmed.endsWith('**') && trimmed.length < 40) {
+      items.push({ type: 'callout', content: trimmed.replace(/\*\*/g, '') });
     } else {
       items.push({ type: 'paragraph', content: trimmed });
     }
@@ -180,31 +347,61 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
     day: 'numeric'
   });
 
+  const formatTitle = (title: string) => {
+    // Remove content type prefix if present
+    return title.replace(/^(sermon|devotional|bibleStudy|prayer|announcement|bulletin):\s*/i, '');
+  };
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      {/* Cover Page */}
+      <Page size="A4" style={styles.coverPage}>
+        <Text style={styles.coverTitle}>{formatTitle(title)}</Text>
+        <View style={styles.coverDivider} />
+        <Text style={styles.coverSubtitle}>
+          {contentType.charAt(0).toUpperCase() + contentType.slice(1)} Content
+        </Text>
+        <Text style={styles.coverMeta}>
+          Generated for Church Use
+        </Text>
+        <Text style={styles.coverMeta}>
+          {currentDate}
+        </Text>
+        <Text style={{ ...styles.pageNumber, color: 'rgba(255,255,255,0.5)' }}>
+          SDA Content Generator
+        </Text>
+      </Page>
+
+      {/* Content Page */}
+      <Page size="A4" style={styles.contentPage}>
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>
-            {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
-          </Text>
+          <View style={styles.headerRow}>
+            <View>
+              <Text style={styles.title}>{formatTitle(title)}</Text>
+              <Text style={styles.subtitle}>
+                {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
+              </Text>
+            </View>
+          </View>
         </View>
 
         {/* Table of Contents */}
         {headings.length > 0 && (
           <View style={styles.toc}>
-            <Text style={styles.tocTitle}>Table of Contents</Text>
+            <Text style={styles.tocTitle}>📑 Table of Contents</Text>
             {headings.map((heading, index) => (
-              <Text 
-                key={index} 
-                style={heading.level === 1 ? styles.tocItemMain : styles.tocItem}
-              >
-                {heading.level > 1 ? '• ' : ''}{heading.text}
-              </Text>
+              <View key={index} style={styles.listItem}>
+                <Text style={styles.bullet}>{heading.level === 1 ? '●' : '○'}</Text>
+                <Text style={heading.level === 1 ? styles.tocItemMain : styles.tocItem}>
+                  {heading.text}
+                </Text>
+              </View>
             ))}
           </View>
         )}
 
+        {/* Main Content */}
         <View>
           {parsedContent.map((item, index) => {
             switch (item.type) {
@@ -222,18 +419,42 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
                 );
               case 'list':
                 return (
-                  <View key={index} style={{ flexDirection: 'row', marginBottom: 3 }}>
-                    <Text style={{ width: 15 }}>• </Text>
-                    <Text style={styles.listItem}>{item.content}</Text>
+                  <View key={index} style={styles.listItem}>
+                    <Text style={styles.bullet}>•</Text>
+                    <Text style={styles.listItemText}>{item.content}</Text>
                   </View>
                 );
               case 'scripture':
                 return (
-                  <View key={index} style={{ marginBottom: 8 }}>
-                    <Text style={styles.scripture}>{item.content}</Text>
+                  <View key={index} style={styles.scripture}>
+                    <Text style={styles.verse}>{item.content}</Text>
+                  </View>
+                );
+              case 'prayer':
+                return (
+                  <View key={index} style={styles.prayer}>
+                    <Text style={styles.prayerTitle}>🙏 Prayer</Text>
+                    <Text style={styles.prayerText}>{item.content}</Text>
+                  </View>
+                );
+              case 'callout':
+                return (
+                  <View key={index} style={styles.callout}>
+                    <Text style={styles.calloutTitle}>{item.content}</Text>
                   </View>
                 );
               default:
+                // Check for bold text
+                const boldMatch = item.content.match(/\*\*(.+?)\*\*/g);
+                if (boldMatch) {
+                  return (
+                    <Text key={index} style={styles.paragraph}>
+                      {item.content.split('**').map((part, i) => 
+                        i % 2 === 1 ? <Text style={styles.bold}>{part}</Text> : part
+                      )}
+                    </Text>
+                  );
+                }
                 return (
                   <Text key={index} style={styles.paragraph}>{item.content}</Text>
                 );
@@ -241,8 +462,16 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
           })}
         </View>
 
-        <View style={styles.footer}>
-          <Text>Generated by SDA Content Generator • For church use</Text>
+        {/* Footer */}
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText}>Generated by SDA Content Generator</Text>
+          <Text style={styles.footerText}>For Church Use</Text>
+          <Text 
+            style={styles.footerPage} 
+            render={({ pageNumber, totalPages }) => (
+              `${pageNumber} / ${totalPages}`
+            )} 
+          />
         </View>
       </Page>
     </Document>
