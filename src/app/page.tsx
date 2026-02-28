@@ -107,6 +107,7 @@ export default function Home() {
           title={output.title} 
           content={output.content} 
           contentType={contentType}
+          headings={headings}
         />
       ).toBlob();
       const url = URL.createObjectURL(blob);

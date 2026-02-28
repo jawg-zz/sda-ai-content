@@ -1,7 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
-// Use standard PDF fonts (built-in, always work)
+// Use standard PDF fonts
 const styles = StyleSheet.create({
   page: {
     padding: 50,
@@ -81,7 +81,41 @@ const styles = StyleSheet.create({
     borderTopColor: '#E5E0D8',
     paddingTop: 10,
   },
+  // Table of Contents styles
+  toc: {
+    marginBottom: 25,
+    padding: 15,
+    backgroundColor: '#FDF8F0',
+    borderRadius: 4,
+  },
+  tocTitle: {
+    fontSize: 14,
+    fontFamily: 'Helvetica-Bold',
+    color: '#2D5016',
+    marginBottom: 10,
+    paddingBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D4A84B',
+  },
+  tocItem: {
+    fontSize: 10,
+    color: '#2C2C2C',
+    marginBottom: 4,
+    paddingLeft: 10,
+  },
+  tocItemMain: {
+    fontSize: 11,
+    fontFamily: 'Helvetica-Bold',
+    color: '#1E3A0F',
+    marginBottom: 4,
+  },
 });
+
+interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface ContentItem {
   type: 'paragraph' | 'heading' | 'subheading' | 'list' | 'scripture';
@@ -92,23 +126,38 @@ interface PDFDocumentProps {
   title: string;
   content: string;
   contentType: string;
+  headings?: Heading[];
 }
 
 // Parse markdown content to structured format
-const parseContent = (content: string): ContentItem[] => {
+const parseContent = (content: string): { items: ContentItem[], headings: Heading[] } => {
   const lines = content.split('\n');
   const items: ContentItem[] = [];
+  const headings: Heading[] = [];
+  let headingCounter = 0;
   
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
     
     if (trimmed.startsWith('# ')) {
-      items.push({ type: 'heading', content: trimmed.substring(2) });
+      headingCounter++;
+      const text = trimmed.substring(2);
+      const id = `heading-${headingCounter}`;
+      headings.push({ id, text, level: 1 });
+      items.push({ type: 'heading', content: text });
     } else if (trimmed.startsWith('## ')) {
-      items.push({ type: 'subheading', content: trimmed.substring(3) });
+      headingCounter++;
+      const text = trimmed.substring(3);
+      const id = `heading-${headingCounter}`;
+      headings.push({ id, text, level: 2 });
+      items.push({ type: 'subheading', content: text });
     } else if (trimmed.startsWith('### ')) {
-      items.push({ type: 'subheading', content: trimmed.substring(4) });
+      headingCounter++;
+      const text = trimmed.substring(4);
+      const id = `heading-${headingCounter}`;
+      headings.push({ id, text, level: 3 });
+      items.push({ type: 'subheading', content: text });
     } else if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
       items.push({ type: 'list', content: trimmed.substring(2) });
     } else if (/^[A-Z][a-z]+\s+\d+:\d+/.test(trimmed)) {
@@ -118,11 +167,13 @@ const parseContent = (content: string): ContentItem[] => {
     }
   }
   
-  return items;
+  return { items, headings };
 };
 
-export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, contentType }) => {
-  const parsedContent = parseContent(content);
+export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, contentType, headings: providedHeadings }) => {
+  const { items: parsedContent, headings: extractedHeadings } = parseContent(content);
+  const headings = providedHeadings || extractedHeadings;
+  
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -138,6 +189,21 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
             {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
           </Text>
         </View>
+
+        {/* Table of Contents */}
+        {headings.length > 0 && (
+          <View style={styles.toc}>
+            <Text style={styles.tocTitle}>Table of Contents</Text>
+            {headings.map((heading, index) => (
+              <Text 
+                key={index} 
+                style={heading.level === 1 ? styles.tocItemMain : styles.tocItem}
+              >
+                {heading.level > 1 ? '• ' : ''}{heading.text}
+              </Text>
+            ))}
+          </View>
+        )}
 
         <View>
           {parsedContent.map((item, index) => {
