@@ -346,9 +346,12 @@ ${scripture ? `**Scripture Reading:** ${scripture}` : "**Scripture Reading:** To
 async function handleTopicSuggestions(contentType: string, targetAudience: string) {
   const apiKey = process.env.AI_API_KEY;
   const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
+  
+  console.log("Suggestions - API Key exists:", !!apiKey, "API URL:", apiUrl);
 
   // If no valid API key, return default suggestions
   if (!apiKey || !apiKey.trim()) {
+    console.log("No API key, using defaults");
     return NextResponse.json({
       suggestions: getDefaultSuggestions(contentType)
     });

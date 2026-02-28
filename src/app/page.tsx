@@ -179,7 +179,9 @@ export default function Home() {
 
   const fetchSuggestions = async () => {
     setSuggestionsLoading(true);
+    setSuggestions([]);
     try {
+      console.log("Fetching suggestions for:", contentType, targetAudience);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -190,6 +192,7 @@ export default function Home() {
         }),
       });
       const data = await response.json();
+      console.log("Suggestions response:", data);
       if (data.suggestions) {
         setSuggestions(data.suggestions);
       }
