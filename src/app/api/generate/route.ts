@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { contentType, topic, scripture, targetAudience } = await request.json();
+  const { contentType, topic, scripture, targetAudience, serviceTime } = await request.json();
 
   // Build the prompt
   let userPrompt = "";
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       userPrompt = `Generate church announcement text for ${targetAudience}. Topic: "${topic}". Make it welcoming, clear, and professional.`;
       break;
     case "bulletin":
-      userPrompt = `Generate a weekly church bulletin for ${targetAudience}. Topic: "${topic}". Include: welcome message, service times, upcoming events, announcements, and prayer requests. Make it welcoming, well-organized, and ready to print.`;
+      userPrompt = `Generate a weekly church bulletin for ${targetAudience}. Topic: "${topic}". ${serviceTime ? `Service time: ${serviceTime}.` : ""} Include: welcome message, service times, upcoming events, announcements, and prayer requests. Make it welcoming, well-organized, and ready to print.`;
       break;
     default:
       userPrompt = `Generate content for ${targetAudience}. Topic: "${topic}". Type: ${contentType}.`;

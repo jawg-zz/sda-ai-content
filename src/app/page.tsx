@@ -14,6 +14,7 @@ interface HistoryItem {
 export default function Home() {
   const [contentType, setContentType] = useState("sermon");
   const [topic, setTopic] = useState("");
+  const [serviceTime, setServiceTime] = useState("");
   const [scripture, setScripture] = useState("");
   const [targetAudience, setTargetAudience] = useState("General Church");
   const [output, setOutput] = useState<{ title: string; content: string } | null>(null);
@@ -118,6 +119,7 @@ export default function Home() {
         body: JSON.stringify({
           contentType,
           topic,
+          serviceTime,
           scripture,
           targetAudience,
         }),
@@ -215,6 +217,18 @@ export default function Home() {
                   onChange={(e) => setTopic(e.target.value)}
                 />
               </div>
+
+              {contentType === "bulletin" && (
+                <div className="form-group">
+                  <label>Service Time</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 9:00 AM, 11:00 AM"
+                    value={serviceTime}
+                    onChange={(e) => setServiceTime(e.target.value)}
+                  />
+                </div>
+              )}
 
               <div className="form-group">
                 <label>Target Audience</label>
