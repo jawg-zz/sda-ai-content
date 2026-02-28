@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   const { contentType, topic, scripture, targetAudience, serviceTime } = await request.json();
 
+  // Handle topic suggestions
+  if (topic === "SUGGEST_TOPICS") {
+    return handleTopicSuggestions(contentType, targetAudience);
+  }
+
   // Build the prompt
   let userPrompt = "";
   
@@ -335,4 +340,116 @@ ${scripture ? `**Scripture Reading:** ${scripture}` : "**Scripture Reading:** To
     content: templates[type] || templates.sermon,
     status: "demo",
   };
+}
+
+// Handle AI-powered topic suggestions
+async function handleTopicSuggestions(contentType: string, targetAudience: string) {
+  const apiKey = process.env.AI_API_KEY;
+  const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
+
+  // If no valid API key, return default suggestions
+  if (!apiKey || !apiKey.trim()) {
+    return NextResponse.json({
+      suggestions: getDefaultSuggestions(contentType)
+    });
+  }
+
+  const systemPrompt = `You are a helpful assistant for Seventh-day Adventist (SDA) churches. Suggest relevant, engaging topics for church content.`;
+  const userPrompt = `Suggest 5-6 relevant topics for a ${contentType} targeting ${targetAudience}. Return ONLY a JSON array of strings, nothing else. Example: ["Topic 1", "Topic 2", "Topic 3"]`;
+
+  try {
+    const response = await fetch(`${apiUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({
+        suggestions: getDefaultSuggestions(contentType)
+      });
+    }
+
+    const data = await response.json();
+    let content = data.choices?.[0]?.message?.content || "";
+
+    // Parse the JSON array from response
+    try {
+      // Try to extract JSON array from response
+      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const suggestions = JSON.parse(jsonMatch[0]);
+        return NextResponse.json({ suggestions });
+      }
+    } catch (parseError) {
+      console.error("Error parsing suggestions:", parseError);
+    }
+
+    return NextResponse.json({
+      suggestions: getDefaultSuggestions(contentType)
+    });
+  } catch (error) {
+    console.error("Error generating suggestions:", error);
+    return NextResponse.json({
+      suggestions: getDefaultSuggestions(contentType)
+    });
+  }
+}
+
+function getDefaultSuggestions(contentType: string): string[] {
+  const suggestions: Record<string, string[]> = {
+    sermon: [
+      "Faith in Difficult Times",
+      "The Power of Prayer",
+      "Living for Christ",
+      "God's Unconditional Love",
+      "Walking by Faith",
+      "Trusting God's Plan"
+    ],
+    devotional: [
+      "Morning Blessings",
+      "Trusting God's Plan",
+      "Daily Guidance",
+      "Peace in Chaos",
+      "God's Presence"
+    ],
+    bibleStudy: [
+      "Exodus: Liberation",
+      "Psalms of Praise",
+      "Life of Christ",
+      "Epistles: Living Faith",
+      "Prophecy Today"
+    ],
+    prayer: [
+      "Church Unity",
+      "Community Needs",
+      "Missionaries",
+      "Personal Growth",
+      "Global Revival"
+    ],
+    announcement: [
+      "Special Events",
+      "Youth Program",
+      "Outreach Initiative",
+      "Fellowship Gathering",
+      "Worship Schedule"
+    ],
+    bulletin: [
+      "Weekly Highlights",
+      "Sabbath Service",
+      "Midweek Meeting",
+      "Community Outreach",
+      "Youth Fellowship"
+    ],
+  };
+  return suggestions[contentType] || suggestions.sermon;
 }

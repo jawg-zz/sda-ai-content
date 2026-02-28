@@ -25,6 +25,8 @@ export default function Home() {
   const [contentType, setContentType] = useState("sermon");
   const [topic, setTopic] = useState("");
   const [serviceTime, setServiceTime] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [scripture, setScripture] = useState("");
   const [targetAudience, setTargetAudience] = useState("General Church");
   const [output, setOutput] = useState<{ title: string; content: string } | null>(null);
@@ -175,6 +177,29 @@ export default function Home() {
     bulletin: "📋",
   };
 
+  const fetchSuggestions = async () => {
+    setSuggestionsLoading(true);
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contentType,
+          topic: "SUGGEST_TOPICS",
+          targetAudience,
+        }),
+      });
+      const data = await response.json();
+      if (data.suggestions) {
+        setSuggestions(data.suggestions);
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  };
+
   const handleGenerate = async () => {
     if (!topic) {
       alert("Please enter a topic");
@@ -283,12 +308,37 @@ export default function Home() {
             <div className="form-row">
               <div className="form-group">
                 <label>Topic *</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Faith, Prayer, Love, Stewardship"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                />
+                <div className="topic-input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="e.g., Faith, Prayer, Love, Stewardship"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="suggestion-btn"
+                    onClick={fetchSuggestions}
+                    disabled={suggestionsLoading}
+                    title="Get AI topic suggestions"
+                  >
+                    {suggestionsLoading ? "..." : "💡"}
+                  </button>
+                </div>
+                {suggestions.length > 0 && (
+                  <div className="suggestions-list">
+                    <span className="suggestions-label">Try these:</span>
+                    {suggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        className="suggestion-chip"
+                        onClick={() => { setTopic(s); setSuggestions([]); }}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {contentType === "bulletin" && (
