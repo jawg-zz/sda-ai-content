@@ -46,11 +46,12 @@ export async function POST(request: NextRequest) {
 
   const systemPrompt = `You are a helpful assistant that generates content for Seventh-day Adventist (SDA) churches. Generate biblically sound, uplifting content that aligns with SDA beliefs and values.`;
 
-  // Check for API key
+  // Check for API key - if not valid, use demo content
   const apiKey = process.env.AI_API_KEY;
   const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
 
-  if (!apiKey || !apiKey.trim()) {
+  // Use demo content if no API key or invalid key
+  if (!apiKey || !apiKey.trim() || apiKey.length < 10) {
     // Return demo content
     return NextResponse.json(
       generateDemoContent(contentType, topic, scripture, targetAudience)
@@ -73,6 +74,13 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    if (!response.ok) {
+      console.error("AI API Error:", response.status, response.statusText);
+      return NextResponse.json(
+        generateDemoContent(contentType, topic, scripture, targetAudience)
+      );
+    }
+    
     const data = await response.json();
     
     if (data.choices && data.choices[0]) {
@@ -95,6 +103,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("AI Error:", error);
+    // Return demo content on any error
     return NextResponse.json(
       generateDemoContent(contentType, topic, scripture, targetAudience)
     );
