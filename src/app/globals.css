@@ -444,6 +444,73 @@ header {
   overflow-y: auto;
 }
 
+/* Enhanced Output Body */
+.output-body {
+  padding: 2rem;
+  line-height: 1.85;
+}
+
+.output-body h2.ob-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--primary);
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gold);
+}
+
+.output-body h2.ob-h2:first-child {
+  margin-top: 0;
+}
+
+.output-body h3.ob-h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  color: var(--primary-dark);
+  margin: 1.75rem 0 0.75rem;
+  font-weight: 600;
+}
+
+.output-body h4.ob-h4 {
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 1.5rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.output-body p.ob-p {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.output-body ul.ob-list,
+.output-body ol.ob-list {
+  margin: 0.75rem 0 1rem 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.output-body li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.output-body ul.ob-list li::marker {
+  color: var(--gold);
+}
+
+.output-body ol.ob-list li::marker {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.output-body .scripture-ref {
+  background: linear-gradient(120deg, var(--gold-light) 0%, #FEF3D9 100%);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-style: italic;
+  color: var(--secondary);
+}
+
 /* Footer */
 footer {
   text-align: center;
