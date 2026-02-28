@@ -289,8 +289,73 @@ export default function Home() {
           >
             📋 History {history.length > 0 && <span className="badge">{history.length}</span>}
           </button>
+          <button 
+            className="history-toggle bible-toggle"
+            onClick={() => setShowBibleBrowser(!showBibleBrowser)}
+          >
+            📖 Bible
+          </button>
         </div>
       </header>
+
+      {showBibleBrowser && (
+        <div className="bible-browser-panel">
+          <div className="bible-browser-header">
+            <h3>📖 Bible Browser</h3>
+            <button className="clear-btn" onClick={() => setShowBibleBrowser(false)}>Close</button>
+          </div>
+          
+          <div className="bible-search">
+            <input
+              type="text"
+              placeholder="Search verses..."
+              value={bibleSearchQuery}
+              onChange={(e) => setBibleSearchQuery(e.target.value)}
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter' && bibleSearchQuery.trim()) {
+                  setBibleLoading(true);
+                  try {
+                    const res = await fetch(`/api/bible?action=search&q=${encodeURIComponent(bibleSearchQuery)}`);
+                    const data = await res.json();
+                    setBibleSearchResults(data.results || []);
+                  } catch (err) {
+                    console.error("Search error:", err);
+                  } finally {
+                    setBibleLoading(false);
+                  }
+                }
+              }}
+            />
+          </div>
+
+          {bibleSearchResults.length > 0 ? (
+            <div className="bible-search-results">
+              {bibleSearchResults.map((result, idx) => (
+                <button
+                  key={idx}
+                  className="bible-result-item"
+                  onClick={() => {
+                    setClickedScripture(result);
+                    setShowBibleBrowser(false);
+                  }}
+                >
+                  <span className="bible-result-ref">{result.reference}</span>
+                  <span className="bible-result-text">{result.text.substring(0, 80)}...</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="bible-verse-of-day">
+              <h4>✝️ Verse of the Day</h4>
+              <div className="votd-verse">
+                <p className="votd-ref">Psalm 23:1</p>
+                <p className="votd-text">"The LORD is my shepherd; I shall not want."</p>
+              </div>
+              <p className="votd-kjv">King James Version</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {showHistory && (
         <div className="history-panel">

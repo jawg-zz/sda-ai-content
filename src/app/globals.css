@@ -986,3 +986,125 @@ footer {
   color: var(--text);
   font-style: italic;
 }
+
+/* Bible Browser */
+.bible-toggle {
+  background: var(--primary) !important;
+}
+
+.bible-browser-panel {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+  animation: slideDown 0.3s ease;
+}
+
+.bible-browser-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 1rem;
+}
+
+.bible-browser-header h3 {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.bible-search {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.bible-search input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.bible-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+.bible-search-results {
+  max-width: 1100px;
+  margin: 1rem auto;
+  padding: 0 20px;
+}
+
+.bible-result-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1rem;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.bible-result-item:hover {
+  background: var(--white);
+  border-color: var(--primary-light);
+}
+
+.bible-result-ref {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.bible-result-text {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.bible-verse-of-the-day {
+  max-width: 1100px;
+  margin: 1rem auto;
+  padding: 0 20px;
+}
+
+.bible-verse-of-the-day h4 {
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.votd-verse {
+  background: var(--cream);
+  border-left: 4px solid var(--gold);
+  padding: 1.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.votd-ref {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.votd-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text);
+  font-style: italic;
+}
+
+.votd-kjv {
+  font-size: 0.8rem;
+  color: var(--text-lighter);
+  margin-top: 0.75rem;
+  text-align: right;
+}
