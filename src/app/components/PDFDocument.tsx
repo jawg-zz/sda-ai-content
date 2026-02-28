@@ -21,10 +21,26 @@ const styles = StyleSheet.create({
   // Cover page
   coverPage: {
     flex: 1,
-    backgroundColor: '#2D5016',
+    backgroundColor: '#1D3D7C',
     padding: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  coverLogoContainer: {
+    marginBottom: 40,
+    alignItems: 'center',
+  },
+  coverLamb: {
+    fontSize: 60,
+    marginBottom: 15,
+  },
+  coverChurchName: {
+    fontSize: 14,
+    color: '#D4A84B',
+    textAlign: 'center',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    marginBottom: 5,
   },
   coverTitle: {
     fontSize: 36,
@@ -50,6 +66,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#D4A84B',
     marginVertical: 30,
   },
+  coverCross: {
+    position: 'absolute',
+    top: 30,
+    right: 30,
+    fontSize: 30,
+    color: '#D4A84B',
+    opacity: 0.6,
+  },
   
   // Content page
   contentPage: {
@@ -68,9 +92,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
+  headerLeft: {
+    flex: 1,
+  },
+  headerRight: {
+    alignItems: 'flex-end',
+  },
+  headerLamb: {
+    fontSize: 28,
+    marginBottom: 5,
+  },
+  headerChurchName: {
+    fontSize: 8,
+    color: '#1D3D7C',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
   title: {
     fontSize: 26,
-    color: '#2D5016',
+    color: '#1D3D7C',
     fontWeight: 'bold',
     flex: 1,
   },
@@ -94,7 +134,7 @@ const styles = StyleSheet.create({
   tocTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2D5016',
+    color: '#1D3D7C',
     marginBottom: 15,
     paddingBottom: 8,
     borderBottomWidth: 1,
@@ -109,7 +149,7 @@ const styles = StyleSheet.create({
   tocItemMain: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#1E3A0F',
+    color: '#1D3D7C',
     marginBottom: 6,
   },
   tocPageNum: {
@@ -126,7 +166,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2D5016',
+    color: '#1D3D7C',
     marginBottom: 12,
     paddingBottom: 8,
     borderBottomWidth: 2,
@@ -135,7 +175,7 @@ const styles = StyleSheet.create({
   sectionTitleSmall: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#1E3A0F',
+    color: '#1D3D7C',
     marginBottom: 10,
     marginTop: 15,
     paddingBottom: 5,
@@ -356,6 +396,10 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
     <Document>
       {/* Cover Page */}
       <Page size="A4" style={styles.coverPage}>
+        <View style={styles.coverLogoContainer}>
+          <Text style={styles.coverLamb}>🐑</Text>
+          <Text style={styles.coverChurchName}>Seventh-day Adventist Church</Text>
+        </View>
         <Text style={styles.coverTitle}>{formatTitle(title)}</Text>
         <View style={styles.coverDivider} />
         <Text style={styles.coverSubtitle}>
@@ -377,12 +421,16 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <View>
-              <Text style={styles.title}>{formatTitle(title)}</Text>
-              <Text style={styles.subtitle}>
-                {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
-              </Text>
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerLamb}>🐑</Text>
+              <Text style={styles.headerChurchName}>Seventh-day Adventist Church</Text>
             </View>
+          </View>
+          <View style={{ marginTop: 15 }}>
+            <Text style={styles.title}>{formatTitle(title)}</Text>
+            <Text style={styles.subtitle}>
+              {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
+            </Text>
           </View>
         </View>
 
