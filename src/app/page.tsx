@@ -80,6 +80,7 @@ export default function Home() {
     { id: "bibleStudy", label: "Bible Study" },
     { id: "prayer", label: "Prayer" },
     { id: "announcement", label: "Announcement" },
+    { id: "bulletin", label: "Bulletin" },
   ];
 
   const audiences = [
@@ -97,6 +98,7 @@ export default function Home() {
     bibleStudy: "📚",
     prayer: "🙏",
     announcement: "📢",
+    bulletin: "📋",
   };
 
   const handleGenerate = async () => {

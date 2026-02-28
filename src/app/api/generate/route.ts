@@ -22,6 +22,9 @@ export async function POST(request: NextRequest) {
     case "announcement":
       userPrompt = `Generate church announcement text for ${targetAudience}. Topic: "${topic}". Make it welcoming, clear, and professional.`;
       break;
+    case "bulletin":
+      userPrompt = `Generate a weekly church bulletin for ${targetAudience}. Topic: "${topic}". Include: welcome message, service times, upcoming events, announcements, and prayer requests. Make it welcoming, well-organized, and ready to print.`;
+      break;
     default:
       userPrompt = `Generate content for ${targetAudience}. Topic: "${topic}". Type: ${contentType}.`;
   }
@@ -261,6 +264,66 @@ We are excited to share about "${topic}" with you this week.
 For more information, please contact the church office.
 
 God bless you!
+
+---
+
+*Demo content - Add your OpenAI API key to get AI-generated content*`,
+
+    bulletin: `# Weekly Church Bulletin
+*${topic}*
+
+---
+
+## Welcome & Announcements
+
+Welcome to our church family! We are glad to have you join us for worship today.
+
+---
+
+## Service Times
+
+**Sabbath School:** 9:30 AM
+**Main Service:** 11:00 AM
+**Youth Fellowship:** 3:00 PM
+
+---
+
+## Upcoming Events
+
+- **Prayer Meeting:** Wednesday, 6:00 PM
+- **Bible Study:** Thursday, 7:00 PM
+- **Community Outreach:** Saturday, 9:00 AM
+
+---
+
+## Announcements
+
+${scripture ? `**Scripture Reading:** ${scripture}` : "**Scripture Reading:** To be announced"}
+
+- Welcome to all visitors!
+- Please join us for fellowship lunch after service
+- Children's storytime during sermon
+
+---
+
+## Prayer Requests
+
+*Lift up these requests in your prayers:*
+
+- Church growth and unity
+- Community needs
+- Health and healing
+- Missionary work
+
+---
+
+## Church Contact
+
+**Address:** [Your Church Address]
+**Phone:** [Phone Number]
+**Email:** [Email]
+
+*We exist to glorify God and share His love with our community.*
 
 ---
 
