@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface HistoryItem {
   id: number;
@@ -24,6 +30,10 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [headings, setHeadings] = useState<Heading[]>([]);
+  const [activeHeading, setActiveHeading] = useState("");
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("sda-content-history");
@@ -31,6 +41,38 @@ export default function Home() {
       setHistory(JSON.parse(saved));
     }
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!output?.content) {
+      setHeadings([]);
+      return;
+    }
+
+    const headingRegex = /^(#{1,3})\s+(.+)$/gm;
+    const extracted: Heading[] = [];
+    let match;
+
+    while ((match = headingRegex.exec(output.content)) !== null) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      extracted.push({ id, text, level });
+    }
+
+    setHeadings(extracted);
+  }, [output]);
 
   const saveToHistory = (data: { title: string; content: string }) => {
     const newItem: HistoryItem = {
@@ -75,6 +117,14 @@ export default function Home() {
   const clearHistory = () => {
     setHistory([]);
     localStorage.removeItem("sda-content-history");
+  };
+
+  const scrollToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveHeading(id);
+    }
   };
 
   const contentTypes = [
@@ -284,7 +334,13 @@ export default function Home() {
           )}
 
           {output && !loading && (
-            <section className="output-section">
+            <section className="output-section" ref={contentRef}>
+              <div className="reading-progress">
+                <div 
+                  className="reading-progress-bar" 
+                  style={{ width: `${scrollProgress}%` }}
+                />
+              </div>
               <div className="output-header">
                 <h3>{output.title}</h3>
                 <div className="output-actions">
@@ -311,10 +367,49 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-              <div className="output-body">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {output.content}
-                </ReactMarkdown>
+              <div className="output-layout">
+                {headings.length > 2 && (
+                  <aside className="toc-sidebar">
+                    <div className="toc-container">
+                      <h4 className="toc-title">Contents</h4>
+                      <nav className="toc-nav">
+                        {headings.map((heading) => (
+                          <button
+                            key={heading.id}
+                            className={`toc-link toc-level-${heading.level} ${activeHeading === heading.id ? "active" : ""}`}
+                            onClick={() => scrollToHeading(heading.id)}
+                          >
+                            {heading.text}
+                          </button>
+                        ))}
+                      </nav>
+                    </div>
+                  </aside>
+                )}
+                <div className="output-body">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({ children }) => {
+                        const text = String(children);
+                        const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                        return <h1 id={id}>{children}</h1>;
+                      },
+                      h2: ({ children }) => {
+                        const text = String(children);
+                        const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                        return <h2 id={id}>{children}</h2>;
+                      },
+                      h3: ({ children }) => {
+                        const text = String(children);
+                        const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                        return <h3 id={id}>{children}</h3>;
+                      },
+                    }}
+                  >
+                    {output.content}
+                  </ReactMarkdown>
+                </div>
               </div>
             </section>
           )}
