@@ -25,6 +25,19 @@ export async function POST(request: NextRequest) {
     case "bulletin":
       userPrompt = `Generate a weekly church bulletin for ${targetAudience}. Topic: "${topic}". ${serviceTime ? `Service time: ${serviceTime}.` : ""} Include: welcome message, service times, upcoming events, announcements, and prayer requests. Make it welcoming, well-organized, and ready to print.`;
       break;
+    case "SUGGEST_TOPICS":
+      // Return topic suggestions based on content type
+      const suggestions: Record<string, string[]> = {
+        sermon: ["Faith in Difficult Times", "The Power of Prayer", "Living for Christ", "God's Unconditional Love", "Walking by Faith"],
+        devotional: ["Morning Blessings", "Trusting God's Plan", "Daily Guidance", "Peace in Chaos", "God's Presence"],
+        bibleStudy: ["Exodus: Liberation", "Psalms of Praise", "Life of Christ", "Epistles: Living Faith", "Prophecy Today"],
+        prayer: ["Church Unity", "Community Needs", "Missionaries", "Personal Growth", "Global Revival"],
+        announcement: ["Special Events", "Youth Program", "Outreach Initiative", "Fellowship Gathering", "Worship Schedule"],
+        bulletin: ["Weekly Highlights", "Sabbath Service", "Midweek Meeting", "Community Outreach", "Youth Fellowship"],
+      };
+      return NextResponse.json({ 
+        suggestions: suggestions[contentType] || suggestions.sermon 
+      });
     default:
       userPrompt = `Generate content for ${targetAudience}. Topic: "${topic}". Type: ${contentType}.`;
   }
