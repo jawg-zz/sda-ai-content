@@ -55,6 +55,45 @@ export default function Home() {
     }
   }, []);
 
+  // Load Verse of the Day on mount
+  useEffect(() => {
+    const loadVOTD = async () => {
+      try {
+        // Use date-based index for consistent daily verse
+        const today = new Date();
+        const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+        const popularVerses = [
+          { ref: "john 3:16", reference: "John 3:16" },
+          { ref: "psalms 23:1", reference: "Psalm 23:1" },
+          { ref: "proverbs 3:5", reference: "Proverbs 3:5" },
+          { ref: "romans 8:28", reference: "Romans 8:28" },
+          { ref: "philippians 4:13", reference: "Philippians 4:13" },
+          { ref: "psalms 119:105", reference: "Psalm 119:105" },
+          { ref: "genesis 1:1", reference: "Genesis 1:1" },
+          { ref: "hebrews 11:1", reference: "Hebrews 11:1" },
+          { ref: "1 corinthians 13:13", reference: "1 Corinthians 13:13" },
+          { ref: "matthew 6:33", reference: "Matthew 6:33" },
+          { ref: "isaiah 40:31", reference: "Isaiah 40:31" },
+          { ref: "john 14:6", reference: "John 14:6" },
+        ];
+        const verseOfDay = popularVerses[dayOfYear % popularVerses.length];
+        
+        const res = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(verseOfDay.ref.split(' ')[0])}&chapter=${verseOfDay.ref.split(' ')[1].split(':')[0]}&verse=${verseOfDay.ref.split(':')[1]}`);
+        const data = await res.json();
+        
+        if (data.reference) {
+          const container = document.getElementById('votd-container');
+          if (container) {
+            container.innerHTML = '<p class="votd-ref">' + data.reference + '</p><p class="votd-text">"' + data.text + '"</p>';
+          }
+        }
+      } catch (e) {
+        console.error("Error loading VOTD:", e);
+      }
+    };
+    loadVOTD();
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -347,9 +386,8 @@ export default function Home() {
           ) : (
             <div className="bible-verse-of-day">
               <h4>✝️ Verse of the Day</h4>
-              <div className="votd-verse">
-                <p className="votd-ref">Psalm 23:1</p>
-                <p className="votd-text">"The LORD is my shepherd; I shall not want."</p>
+              <div className="votd-verse" id="votd-container">
+                <p className="votd-ref">Loading...</p>
               </div>
               <p className="votd-kjv">King James Version</p>
             </div>
