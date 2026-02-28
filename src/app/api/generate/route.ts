@@ -3,21 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   const { contentType, topic, scripture, targetAudience, serviceTime } = await request.json();
 
-  // Handle topic suggestions separately
-  if (topic === "SUGGEST_TOPICS") {
-    const suggestions: Record<string, string[]> = {
-      sermon: ["Faith in Difficult Times", "The Power of Prayer", "Living for Christ", "God's Unconditional Love", "Walking by Faith"],
-      devotional: ["Morning Blessings", "Trusting God's Plan", "Daily Guidance", "Peace in Chaos", "God's Presence"],
-      bibleStudy: ["Exodus: Liberation", "Psalms of Praise", "Life of Christ", "Epistles: Living Faith", "Prophecy Today"],
-      prayer: ["Church Unity", "Community Needs", "Missionaries", "Personal Growth", "Global Revival"],
-      announcement: ["Special Events", "Youth Program", "Outreach Initiative", "Fellowship Gathering", "Worship Schedule"],
-      bulletin: ["Weekly Highlights", "Sabbath Service", "Midweek Meeting", "Community Outreach", "Youth Fellowship"],
-    };
-    return NextResponse.json({ 
-      suggestions: suggestions[contentType] || suggestions.sermon 
-    });
-  }
-
   // Build the prompt
   let userPrompt = "";
   
@@ -46,11 +31,10 @@ export async function POST(request: NextRequest) {
 
   const systemPrompt = `You are a helpful assistant that generates content for Seventh-day Adventist (SDA) churches. Generate biblically sound, uplifting content that aligns with SDA beliefs and values.`;
 
-  // Check for API key - if not valid, use demo content
+  // Check for API key
   const apiKey = process.env.AI_API_KEY;
   const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
 
-  // Use demo content if no API key
   if (!apiKey || !apiKey.trim()) {
     // Return demo content
     return NextResponse.json(
@@ -59,8 +43,6 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    console.log("Calling AI API with:", { apiUrl, contentType, topic: topic?.substring(0, 30) });
-    
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: "POST",
       headers: {
@@ -76,13 +58,6 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    if (!response.ok) {
-      console.error("AI API Error:", response.status, response.statusText);
-      return NextResponse.json(
-        generateDemoContent(contentType, topic, scripture, targetAudience)
-      );
-    }
-    
     const data = await response.json();
     
     if (data.choices && data.choices[0]) {
@@ -105,7 +80,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("AI Error:", error);
-    // Return demo content on any error
     return NextResponse.json(
       generateDemoContent(contentType, topic, scripture, targetAudience)
     );
