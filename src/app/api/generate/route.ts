@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
   if (aiProvider === "openrouter") {
     apiUrl = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1";
     apiKey = process.env.OPENROUTER_API_KEY || "";
-    model = process.env.AI_MODEL || "openrouter/google/gemini-2.0-flash-exp:free";
+    model = process.env.AI_MODEL || "stepfun/step-3.5-flash:free";
   } else {
     // Default/spidmax provider
     apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
@@ -378,7 +378,7 @@ async function handleTopicSuggestions(contentType: string, targetAudience: strin
   if (aiProvider === "openrouter") {
     apiUrl = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1";
     apiKey = process.env.OPENROUTER_API_KEY || "";
-    model = process.env.AI_MODEL || "openrouter/google/gemini-2.0-flash-exp:free";
+    model = process.env.AI_MODEL || "stepfun/step-3.5-flash:free";
   } else {
     apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
     apiKey = process.env.AI_API_KEY || "";
