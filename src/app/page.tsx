@@ -622,9 +622,10 @@ export default function Home() {
                         return <h3 id={id}>{children}</h3>;
                       },
                       p: ({ children }) => {
-                        // Make scripture references clickable
+                        // Make scripture references clickable - improved regex
                         const text = String(children);
-                        const scriptureRegex = /([A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)/g;
+                        // Match patterns like: John 3:16, Psalm 23:1-4, Romans 12:1, 1 Corinthians 13:4-6
+                        const scriptureRegex = /(\d?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)/g;
                         const parts = text.split(scriptureRegex);
                         
                         if (parts.length === 1) {
@@ -634,13 +635,14 @@ export default function Home() {
                         return (
                           <p>
                             {parts.map((part, i) => {
-                              const match = part.match(/^([A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)$/);
+                              const match = part.trim().match(/^(\d?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)$/);
                               if (match) {
                                 return (
                                   <button
                                     key={i}
                                     className="scripture-link"
                                     onClick={() => handleScriptureClick(match[1])}
+                                    title="Click to read full verse"
                                   >
                                     {match[1]}
                                   </button>
