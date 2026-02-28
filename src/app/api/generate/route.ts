@@ -37,10 +37,24 @@ export async function POST(request: NextRequest) {
 
   const systemPrompt = `You are a helpful assistant that generates content for Seventh-day Adventist (SDA) churches. Generate biblically sound, uplifting content that aligns with SDA beliefs and values.`;
 
-  // Check for API key
-  const apiKey = process.env.AI_API_KEY;
-  const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
+  // Get AI configuration from environment
+  const aiProvider = process.env.AI_PROVIDER || "openrouter";
+  let apiUrl: string;
+  let apiKey: string;
+  let model: string;
 
+  if (aiProvider === "openrouter") {
+    apiUrl = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1";
+    apiKey = process.env.OPENROUTER_API_KEY || "";
+    model = process.env.AI_MODEL || "openrouter/google/gemini-2.0-flash-exp:free";
+  } else {
+    // Default/spidmax provider
+    apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
+    apiKey = process.env.AI_API_KEY || "";
+    model = "gpt-4o-mini";
+  }
+
+  // If no valid API key, return demo content
   if (!apiKey || !apiKey.trim()) {
     // Return demo content
     return NextResponse.json(
@@ -49,14 +63,24 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    // Add provider-specific headers
+    if (aiProvider === "openrouter") {
+      headers["Authorization"] = `Bearer ${apiKey}`;
+      headers["HTTP-Referer"] = "https://sda-content-generator.vercel.app";
+      headers["X-Title"] = "SDA Content Generator";
+    } else {
+      headers["Authorization"] = `Bearer ${apiKey}`;
+    }
+
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers,
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -345,14 +369,24 @@ ${scripture ? `**Scripture Reading:** ${scripture}` : "**Scripture Reading:** To
 
 // Handle AI-powered topic suggestions
 async function handleTopicSuggestions(contentType: string, targetAudience: string) {
-  const apiKey = process.env.AI_API_KEY;
-  const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
-  
-  console.log("Suggestions - API Key exists:", !!apiKey, "API URL:", apiUrl);
+  // Get AI configuration from environment
+  const aiProvider = process.env.AI_PROVIDER || "openrouter";
+  let apiUrl: string;
+  let apiKey: string;
+  let model: string;
+
+  if (aiProvider === "openrouter") {
+    apiUrl = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1";
+    apiKey = process.env.OPENROUTER_API_KEY || "";
+    model = process.env.AI_MODEL || "openrouter/google/gemini-2.0-flash-exp:free";
+  } else {
+    apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
+    apiKey = process.env.AI_API_KEY || "";
+    model = "gpt-4o-mini";
+  }
 
   // If no valid API key, return default suggestions
   if (!apiKey || !apiKey.trim()) {
-    console.log("No API key, using defaults");
     return NextResponse.json({
       suggestions: getDefaultSuggestions(contentType)
     });
@@ -362,14 +396,23 @@ async function handleTopicSuggestions(contentType: string, targetAudience: strin
   const userPrompt = `Suggest 5-6 relevant topics for a ${contentType} targeting ${targetAudience}. Return ONLY a JSON array of strings, nothing else. Example: ["Topic 1", "Topic 2", "Topic 3"]`;
 
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (aiProvider === "openrouter") {
+      headers["Authorization"] = `Bearer ${apiKey}`;
+      headers["HTTP-Referer"] = "https://sda-content-generator.vercel.app";
+      headers["X-Title"] = "SDA Content Generator";
+    } else {
+      headers["Authorization"] = `Bearer ${apiKey}`;
+    }
+
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
+      headers,
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
