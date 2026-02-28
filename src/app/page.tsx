@@ -253,16 +253,30 @@ export default function Home() {
 
   // Handle scripture click - fetch verse from Bible API
   const handleScriptureClick = async (reference: string) => {
-    // Parse reference (e.g., "John 3:16" or "Psalm 23:1-4")
-    const match = reference.match(/^(\d?\s?[A-Za-z]+)\s+(\d+):(\d+)(?:-(\d+))?$/i);
-    if (!match) return;
+    // Parse reference - handle more patterns like "1 John 3:16", "Psalm 23:1-4"
+    // Match patterns like: John 3:16, 1 John 3:16, Psalm 23:1, Romans 12:1-5
+    const match = reference.trim().match(/^(\d+?\s+)?([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+(\d+):(\d+)(?:-(\d+))?$/i);
+    if (!match) {
+      console.log("Could not parse reference:", reference);
+      return;
+    }
     
-    const [, book, chapter, verse] = match;
+    const [, prefix, book, chapter, verseStart, verseEnd] = match;
+    const bookName = prefix ? prefix.trim() + " " + book : book;
+    
     try {
-      const response = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(book)}&chapter=${chapter}&verse=${verse}`);
+      const response = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(bookName)}&chapter=${chapter}&verse=${verseStart}`);
       const data = await response.json();
       if (data.text) {
         setClickedScripture({ reference: data.reference, text: data.text });
+      } else {
+        // Try alternative format
+        const altBook = bookName.replace(/\s+/g, '%20');
+        const altRes = await fetch(`/api/bible?action=verse&book=${altBook}&chapter=${chapter}&verse=${verseStart}`);
+        const altData = await altRes.json();
+        if (altData.text) {
+          setClickedScripture({ reference: altData.reference, text: altData.text });
+        }
       }
     } catch (error) {
       console.error("Error fetching scripture:", error);
@@ -622,11 +636,14 @@ export default function Home() {
                         return <h3 id={id}>{children}</h3>;
                       },
                       p: ({ children }) => {
-                        // Make scripture references clickable - improved regex
-                        const text = String(children);
-                        // Match patterns like: John 3:16, Psalm 23:1-4, Romans 12:1, 1 Corinthians 13:4-6
-                        const scriptureRegex = /(\d?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)/g;
-                        const parts = text.split(scriptureRegex);
+                        // Make ALL scripture references clickable - comprehensive regex
+                        let text = String(children);
+                        
+                        // Replace all scripture patterns with clickable buttons
+                        // Matches: John 3:16, Psalm 23:1-4, Romans 12:1, 1 Corinthians 13:4-6, etc.
+                        const scripturePattern = /(\d+?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)/g;
+                        
+                        const parts = text.split(scripturePattern);
                         
                         if (parts.length === 1) {
                           return <p>{children}</p>;
@@ -635,7 +652,7 @@ export default function Home() {
                         return (
                           <p>
                             {parts.map((part, i) => {
-                              const match = part.trim().match(/^(\d?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)$/);
+                              const match = part.match(/^(\d+?\s*[A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)$/);
                               if (match) {
                                 return (
                                   <button
