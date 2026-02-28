@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { contentType, topic, scripture, targetAudience, serviceTime } = await request.json();
+  const body = await request.json();
+  const { contentType, topic, scripture, targetAudience, serviceTime } = body;
+  
+  console.log("API Request:", { contentType, topic, targetAudience });
 
   // Handle topic suggestions
   if (topic === "SUGGEST_TOPICS") {
