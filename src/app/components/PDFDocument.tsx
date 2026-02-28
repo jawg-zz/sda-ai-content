@@ -1,22 +1,11 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 
-// Register fonts
-Font.register({
-  family: 'Playfair Display',
-  src: 'https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtM.ttf'
-});
-
-Font.register({
-  family: 'Source Sans 3',
-  src: 'https://fonts.gstatic.com/s/sourcesans3/v15/nwpBtKy2OAdR1K-IwhWudF-R9QMylBJAV3Bo8Kw47FEN_io6npfB.woff2'
-});
-
+// Use standard PDF fonts (built-in, always work)
 const styles = StyleSheet.create({
   page: {
     padding: 50,
     backgroundColor: '#FFFFFF',
-    fontFamily: 'Source Sans 3',
   },
   header: {
     marginBottom: 30,
@@ -26,7 +15,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontFamily: 'Playfair Display',
+    fontFamily: 'Helvetica-Bold',
     color: '#2D5016',
     marginBottom: 5,
   },
@@ -39,7 +28,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'Playfair Display',
+    fontFamily: 'Helvetica-Bold',
     color: '#2D5016',
     marginBottom: 10,
     paddingBottom: 5,
@@ -48,7 +37,7 @@ const styles = StyleSheet.create({
   },
   sectionTitleSmall: {
     fontSize: 14,
-    fontFamily: 'Playfair Display',
+    fontFamily: 'Helvetica-Bold',
     color: '#1E3A0F',
     marginBottom: 8,
     marginTop: 15,
@@ -91,9 +80,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E5E0D8',
     paddingTop: 10,
-  },
-  contentWrapper: {
-    flexDirection: 'row',
   },
 });
 
