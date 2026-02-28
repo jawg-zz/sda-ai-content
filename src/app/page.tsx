@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { parseMarkdown, detectSections } from "./utils/markdown";
 
 interface HistoryItem {
   id: number;
