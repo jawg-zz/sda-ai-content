@@ -10,6 +10,17 @@ Font.register({
   ]
 });
 
+// SDA Official Colors
+const colors = {
+  sdaBlue: '#1D3D7C',
+  sdaGold: '#D4A84B',
+  sdaWhite: '#FFFFFF',
+  sdaCream: '#FDF8F0',
+  sdaDark: '#1E3A0F',
+  sdaGray: '#666666',
+  sdaLightGray: '#E5E0D8',
+};
+
 const styles = StyleSheet.create({
   // Page layout
   page: {
@@ -18,145 +29,168 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
   },
   
-  // Cover page
+  // COVER PAGE
   coverPage: {
     flex: 1,
-    backgroundColor: '#1D3D7C',
+    backgroundColor: colors.sdaBlue,
     padding: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  coverBorder: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    right: 20,
+    bottom: 20,
+    borderWidth: 2,
+    borderColor: colors.sdaGold,
+    borderRadius: 8,
+  },
   coverLogoContainer: {
-    marginBottom: 40,
     alignItems: 'center',
-  },
-  coverLamb: {
-    fontSize: 60,
-    marginBottom: 15,
-  },
-  coverChurchName: {
-    fontSize: 14,
-    color: '#D4A84B',
-    textAlign: 'center',
-    letterSpacing: 3,
-    textTransform: 'uppercase',
-    marginBottom: 5,
-  },
-  coverTitle: {
-    fontSize: 36,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 10,
-    fontWeight: 'bold',
-  },
-  coverSubtitle: {
-    fontSize: 18,
-    color: '#D4A84B',
-    textAlign: 'center',
     marginBottom: 30,
   },
-  coverMeta: {
+  coverLamb: {
+    fontSize: 80,
+    marginBottom: 20,
+  },
+  coverChurchName: {
     fontSize: 12,
+    color: colors.sdaGold,
+    textAlign: 'center',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  coverTagline: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'center',
+    letterSpacing: 2,
+    marginBottom: 40,
+  },
+  coverTitle: {
+    fontSize: 38,
+    color: colors.sdaWhite,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginBottom: 15,
+    lineHeight: 1.2,
+  },
+  coverDivider: {
+    width: 80,
+    height: 3,
+    backgroundColor: colors.sdaGold,
+    marginVertical: 25,
+  },
+  coverSubtitle: {
+    fontSize: 16,
+    color: colors.sdaGold,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  coverMeta: {
+    fontSize: 11,
     color: 'rgba(255,255,255,0.7)',
     textAlign: 'center',
   },
-  coverDivider: {
-    width: 100,
-    height: 3,
-    backgroundColor: '#D4A84B',
-    marginVertical: 30,
+  coverFooter: {
+    position: 'absolute',
+    bottom: 40,
+    alignItems: 'center',
   },
   coverCross: {
-    position: 'absolute',
-    top: 30,
-    right: 30,
-    fontSize: 30,
-    color: '#D4A84B',
-    opacity: 0.6,
+    fontSize: 24,
+    marginBottom: 10,
+    opacity: 0.5,
   },
   
-  // Content page
+  // CONTENT PAGE
   contentPage: {
-    padding: 50,
+    padding: 0,
   },
   
   // Header
-  header: {
-    marginBottom: 30,
-    borderBottomWidth: 2,
-    borderBottomColor: '#D4A84B',
-    paddingBottom: 15,
+  contentHeader: {
+    backgroundColor: colors.sdaBlue,
+    padding: 30,
+    paddingBottom: 20,
   },
-  headerRow: {
+  headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 15,
   },
-  headerLeft: {
-    flex: 1,
-  },
-  headerRight: {
-    alignItems: 'flex-end',
+  headerLogoSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   headerLamb: {
-    fontSize: 28,
-    marginBottom: 5,
+    fontSize: 32,
   },
   headerChurchName: {
-    fontSize: 8,
-    color: '#1D3D7C',
-    letterSpacing: 1,
+    fontSize: 9,
+    color: colors.sdaGold,
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
+  headerDate: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  headerTitleSection: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.2)',
+    paddingTop: 15,
+  },
   title: {
-    fontSize: 26,
-    color: '#1D3D7C',
+    fontSize: 24,
+    color: colors.sdaWhite,
     fontWeight: 'bold',
-    flex: 1,
+    marginBottom: 5,
   },
   subtitle: {
-    fontSize: 11,
-    color: '#666666',
-    marginTop: 5,
+    fontSize: 12,
+    color: colors.sdaGold,
   },
-  date: {
-    fontSize: 10,
-    color: '#999999',
+  
+  // Content body
+  contentBody: {
+    padding: 40,
   },
   
   // Table of Contents
   toc: {
-    marginBottom: 30,
-    padding: 20,
-    backgroundColor: '#FDF8F0',
+    marginBottom: 35,
+    padding: 25,
+    backgroundColor: colors.sdaCream,
     borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.sdaGold,
   },
   tocTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#1D3D7C',
+    color: colors.sdaBlue,
     marginBottom: 15,
-    paddingBottom: 8,
+    paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#D4A84B',
+    borderBottomColor: colors.sdaLightGray,
   },
   tocItem: {
-    fontSize: 11,
-    color: '#444444',
+    fontSize: 10,
+    color: colors.sdaGray,
     marginBottom: 8,
     paddingLeft: 10,
   },
   tocItemMain: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
-    color: '#1D3D7C',
-    marginBottom: 6,
-  },
-  tocPageNum: {
-    position: 'absolute',
-    right: 0,
-    fontSize: 10,
-    color: '#888888',
+    color: colors.sdaDark,
+    marginBottom: 5,
   },
   
   // Sections
@@ -166,77 +200,99 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1D3D7C',
-    marginBottom: 12,
-    paddingBottom: 8,
+    color: colors.sdaBlue,
+    marginBottom: 15,
+    paddingBottom: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#D4A84B',
+    borderBottomColor: colors.sdaGold,
   },
   sectionTitleSmall: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#1D3D7C',
-    marginBottom: 10,
-    marginTop: 15,
-    paddingBottom: 5,
+    color: colors.sdaDark,
+    marginBottom: 12,
+    marginTop: 20,
+    paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E0D8',
+    borderBottomColor: colors.sdaLightGray,
   },
   
-  // Content
+  // Content elements
   paragraph: {
     fontSize: 11,
-    lineHeight: 1.7,
-    color: '#2C2C2C',
-    marginBottom: 12,
+    lineHeight: 1.8,
+    color: '#333333',
+    marginBottom: 14,
     textAlign: 'justify',
   },
   listItem: {
     fontSize: 11,
-    lineHeight: 1.7,
-    color: '#2C2C2C',
-    marginBottom: 6,
-    paddingLeft: 5,
+    lineHeight: 1.8,
+    color: '#333333',
+    marginBottom: 8,
     flexDirection: 'row',
   },
   bullet: {
-    width: 15,
-    color: '#D4A84B',
+    width: 18,
+    color: colors.sdaGold,
     fontWeight: 'bold',
+    fontSize: 12,
   },
   listItemText: {
     flex: 1,
   },
   
-  // Special formatting
-  bold: {
-    fontWeight: 'bold',
-    color: '#1E3A0F',
-  },
-  italic: {
-    fontStyle: 'italic',
-    color: '#8B4513',
-  },
+  // Scripture box
   scripture: {
-    fontStyle: 'italic',
-    color: '#8B4513',
-    backgroundColor: '#FDF8F0',
-    padding: 10,
-    marginVertical: 8,
+    backgroundColor: colors.sdaCream,
+    padding: 15,
+    marginVertical: 12,
+    borderRadius: 6,
     borderLeftWidth: 4,
-    borderLeftColor: '#D4A84B',
+    borderLeftColor: colors.sdaGold,
   },
-  verse: {
+  scriptureVerse: {
     fontSize: 10,
     color: '#8B4513',
-    marginBottom: 8,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  scriptureText: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: '#555555',
+    lineHeight: 1.6,
   },
   
-  // Callout boxes
+  // Prayer box
+  prayer: {
+    backgroundColor: colors.sdaCream,
+    padding: 25,
+    marginVertical: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.sdaGold,
+    alignItems: 'center',
+  },
+  prayerTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: colors.sdaBlue,
+    marginBottom: 15,
+  },
+  prayerText: {
+    fontSize: 11,
+    lineHeight: 1.9,
+    color: '#444444',
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+  
+  // Callout
   callout: {
     backgroundColor: '#F0F7F0',
-    padding: 15,
-    marginVertical: 10,
+    padding: 18,
+    marginVertical: 15,
     borderRadius: 6,
     borderLeftWidth: 4,
     borderLeftColor: '#4A7C23',
@@ -244,65 +300,31 @@ const styles = StyleSheet.create({
   calloutTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#2D5016',
+    color: colors.sdaDark,
     marginBottom: 8,
-  },
-  calloutText: {
-    fontSize: 10,
-    lineHeight: 1.6,
-    color: '#444444',
-  },
-  
-  // Prayer box
-  prayer: {
-    backgroundColor: '#FDF8F0',
-    padding: 20,
-    marginVertical: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D4A84B',
-  },
-  prayerTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#8B4513',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  prayerText: {
-    fontSize: 11,
-    lineHeight: 1.8,
-    color: '#2C2C2C',
-    fontStyle: 'italic',
-    textAlign: 'center',
   },
   
   // Footer
   footer: {
     position: 'absolute',
-    bottom: 30,
-    left: 50,
-    right: 50,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.sdaBlue,
+    padding: 15,
+    paddingHorizontal: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E0D8',
   },
   footerText: {
     fontSize: 9,
-    color: '#888888',
-  },
-  footerPage: {
-    fontSize: 9,
-    color: '#888888',
+    color: 'rgba(255,255,255,0.7)',
   },
   
-  // Page numbers
   pageNumber: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 18,
     left: 0,
     right: 0,
     textAlign: 'center',
@@ -329,46 +351,30 @@ interface PDFDocumentProps {
   headings?: Heading[];
 }
 
-// Parse markdown content to structured format
 const parseContent = (content: string): { items: ContentItem[], headings: Heading[] } => {
   const lines = content.split('\n');
   const items: ContentItem[] = [];
   const headings: Heading[] = [];
   let headingCounter = 0;
   
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (const line of lines) {
     const trimmed = line.trim();
-    
     if (!trimmed) continue;
     
     if (trimmed.startsWith('# ') && !trimmed.startsWith('##')) {
       headingCounter++;
-      const text = trimmed.substring(2);
-      const id = `heading-${headingCounter}`;
-      headings.push({ id, text, level: 1 });
-      items.push({ type: 'heading', content: text });
+      headings.push({ id: `h${headingCounter}`, text: trimmed.substring(2), level: 1 });
+      items.push({ type: 'heading', content: trimmed.substring(2) });
     } else if (trimmed.startsWith('## ')) {
       headingCounter++;
-      const text = trimmed.substring(3);
-      const id = `heading-${headingCounter}`;
-      headings.push({ id, text, level: 2 });
-      items.push({ type: 'subheading', content: text });
-    } else if (trimmed.startsWith('### ')) {
-      headingCounter++;
-      const text = trimmed.substring(4);
-      const id = `heading-${headingCounter}`;
-      headings.push({ id, text, level: 3 });
-      items.push({ type: 'subheading', content: text });
+      headings.push({ id: `h${headingCounter}`, text: trimmed.substring(3), level: 2 });
+      items.push({ type: 'subheading', content: trimmed.substring(3) });
     } else if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
       items.push({ type: 'list', content: trimmed.substring(2) });
-    } else if (trimmed.toLowerCase().includes('prayer') && trimmed.length < 50) {
-      // Check if next few lines are prayer content
+    } else if (/^[A-Z][a-z]+\s+\d+:\d+/.test(trimmed)) {
+      items.push({ type: 'scripture', content: trimmed });
+    } else if (trimmed.toLowerCase().includes('prayer')) {
       items.push({ type: 'prayer', content: trimmed });
-    } else if (/^[*_]{1,3}[A-Z][a-z]+\s+\d+:\d+/.test(trimmed)) {
-      items.push({ type: 'scripture', content: trimmed.replace(/^[*_]{1,3}/, '').replace(/[*_]{1,3}$/, '') });
-    } else if (trimmed.startsWith('**') && trimmed.endsWith('**') && trimmed.length < 40) {
-      items.push({ type: 'callout', content: trimmed.replace(/\*\*/g, '') });
     } else {
       items.push({ type: 'paragraph', content: trimmed });
     }
@@ -381,146 +387,93 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
   const { items: parsedContent, headings: extractedHeadings } = parseContent(content);
   const headings = providedHeadings || extractedHeadings;
   
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const formatTitle = (title: string) => {
-    // Remove content type prefix if present
-    return title.replace(/^(sermon|devotional|bibleStudy|prayer|announcement|bulletin):\s*/i, '');
+  const formatTitle = (t: string) => t.replace(/^(sermon|devotional|bibleStudy|prayer|announcement|bulletin):\s*/i, '');
+  
+  const getContentTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      sermon: 'Sermon', devotional: 'Daily Devotional', bibleStudy: 'Bible Study',
+      prayer: 'Prayer', announcement: 'Announcement', bulletin: 'Weekly Bulletin',
+    };
+    return labels[type] || type.charAt(0).toUpperCase() + type.slice(1);
   };
 
   return (
     <Document>
-      {/* Cover Page */}
+      {/* COVER PAGE */}
       <Page size="A4" style={styles.coverPage}>
+        <View style={styles.coverBorder} />
         <View style={styles.coverLogoContainer}>
           <Text style={styles.coverLamb}>🐑</Text>
           <Text style={styles.coverChurchName}>Seventh-day Adventist Church</Text>
+          <Text style={styles.coverTagline}>"The Church That Loves"</Text>
         </View>
         <Text style={styles.coverTitle}>{formatTitle(title)}</Text>
         <View style={styles.coverDivider} />
-        <Text style={styles.coverSubtitle}>
-          {contentType.charAt(0).toUpperCase() + contentType.slice(1)} Content
-        </Text>
-        <Text style={styles.coverMeta}>
-          Generated for Church Use
-        </Text>
-        <Text style={styles.coverMeta}>
-          {currentDate}
-        </Text>
-        <Text style={{ ...styles.pageNumber, color: 'rgba(255,255,255,0.5)' }}>
-          SDA Content Generator
-        </Text>
+        <Text style={styles.coverSubtitle}>{getContentTypeLabel(contentType)}</Text>
+        <Text style={styles.coverMeta}>{currentDate}</Text>
+        <View style={styles.coverFooter}>
+          <Text style={styles.coverCross}>✝️</Text>
+          <Text style={styles.coverMeta}>Generated by SDA Content Generator</Text>
+        </View>
       </Page>
 
-      {/* Content Page */}
+      {/* CONTENT PAGE */}
       <Page size="A4" style={styles.contentPage}>
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <View style={styles.headerLeft}>
+        <View style={styles.contentHeader}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerLogoSection}>
               <Text style={styles.headerLamb}>🐑</Text>
               <Text style={styles.headerChurchName}>Seventh-day Adventist Church</Text>
             </View>
+            <Text style={styles.headerDate}>{currentDate}</Text>
           </View>
-          <View style={{ marginTop: 15 }}>
+          <View style={styles.headerTitleSection}>
             <Text style={styles.title}>{formatTitle(title)}</Text>
-            <Text style={styles.subtitle}>
-              {contentType.charAt(0).toUpperCase() + contentType.slice(1)} • {currentDate}
-            </Text>
+            <Text style={styles.subtitle}>{getContentTypeLabel(contentType)}</Text>
           </View>
         </View>
 
-        {/* Table of Contents */}
-        {headings.length > 0 && (
-          <View style={styles.toc}>
-            <Text style={styles.tocTitle}>📑 Table of Contents</Text>
-            {headings.map((heading, index) => (
-              <View key={index} style={styles.listItem}>
-                <Text style={styles.bullet}>{heading.level === 1 ? '●' : '○'}</Text>
-                <Text style={heading.level === 1 ? styles.tocItemMain : styles.tocItem}>
-                  {heading.text}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+        {/* Body */}
+        <View style={styles.contentBody}>
+          {headings.length > 0 && (
+            <View style={styles.toc}>
+              <Text style={styles.tocTitle}>📑 Table of Contents</Text>
+              {headings.map((h, i) => (
+                <View key={i} style={styles.listItem}>
+                  <Text style={styles.bullet}>{h.level === 1 ? '●' : '○'}</Text>
+                  <Text style={h.level === 1 ? styles.tocItemMain : styles.tocItem}>{h.text}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-        {/* Main Content */}
-        <View>
           {parsedContent.map((item, index) => {
             switch (item.type) {
               case 'heading':
-                return (
-                  <View key={index} style={styles.section}>
-                    <Text style={styles.sectionTitle}>{item.content}</Text>
-                  </View>
-                );
+                return <View key={index} style={styles.section}><Text style={styles.sectionTitle}>{item.content}</Text></View>;
               case 'subheading':
-                return (
-                  <View key={index} style={styles.section}>
-                    <Text style={styles.sectionTitleSmall}>{item.content}</Text>
-                  </View>
-                );
+                return <View key={index} style={styles.section}><Text style={styles.sectionTitleSmall}>{item.content}</Text></View>;
               case 'list':
-                return (
-                  <View key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    <Text style={styles.listItemText}>{item.content}</Text>
-                  </View>
-                );
+                return <View key={index} style={styles.listItem}><Text style={styles.bullet}>•</Text><Text style={styles.listItemText}>{item.content}</Text></View>;
               case 'scripture':
-                return (
-                  <View key={index} style={styles.scripture}>
-                    <Text style={styles.verse}>{item.content}</Text>
-                  </View>
-                );
+                return <View key={index} style={styles.scripture}><Text style={styles.scriptureVerse}>{item.content}</Text></View>;
               case 'prayer':
-                return (
-                  <View key={index} style={styles.prayer}>
-                    <Text style={styles.prayerTitle}>🙏 Prayer</Text>
-                    <Text style={styles.prayerText}>{item.content}</Text>
-                  </View>
-                );
-              case 'callout':
-                return (
-                  <View key={index} style={styles.callout}>
-                    <Text style={styles.calloutTitle}>{item.content}</Text>
-                  </View>
-                );
+                return <View key={index} style={styles.prayer}><Text style={styles.prayerTitle}>🙏 Prayer</Text><Text style={styles.prayerText}>{item.content}</Text></View>;
               default:
-                // Check for bold text
-                const boldMatch = item.content.match(/\*\*(.+?)\*\*/g);
-                if (boldMatch) {
-                  return (
-                    <Text key={index} style={styles.paragraph}>
-                      {item.content.split('**').map((part, i) => 
-                        i % 2 === 1 ? <Text style={styles.bold}>{part}</Text> : part
-                      )}
-                    </Text>
-                  );
-                }
-                return (
-                  <Text key={index} style={styles.paragraph}>{item.content}</Text>
-                );
+                return <Text key={index} style={styles.paragraph}>{item.content}</Text>;
             }
           })}
         </View>
 
         {/* Footer */}
         <View style={styles.footer} fixed>
+          <Text style={styles.footerText}>🐑 Seventh-day Adventist Church</Text>
           <Text style={styles.footerText}>Generated by SDA Content Generator</Text>
-          <Text style={styles.footerText}>For Church Use</Text>
-          <Text 
-            style={styles.footerPage} 
-            render={({ pageNumber, totalPages }) => (
-              `${pageNumber} / ${totalPages}`
-            )} 
-          />
         </View>
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
       </Page>
     </Document>
   );
