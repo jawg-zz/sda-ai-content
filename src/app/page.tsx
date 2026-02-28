@@ -1,6 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface HistoryItem {
+  id: number;
+  title: string;
+  content: string;
+  contentType: string;
+  topic: string;
+  timestamp: string;
+}
 
 export default function Home() {
   const [contentType, setContentType] = useState("sermon");
@@ -9,6 +18,61 @@ export default function Home() {
   const [targetAudience, setTargetAudience] = useState("General Church");
   const [output, setOutput] = useState<{ title: string; content: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sda-content-history");
+    if (saved) {
+      setHistory(JSON.parse(saved));
+    }
+  }, []);
+
+  const saveToHistory = (data: { title: string; content: string }) => {
+    const newItem: HistoryItem = {
+      id: Date.now(),
+      title: data.title,
+      content: data.content,
+      contentType,
+      topic,
+      timestamp: new Date().toLocaleString(),
+    };
+    const updated = [newItem, ...history].slice(0, 10);
+    setHistory(updated);
+    localStorage.setItem("sda-content-history", JSON.stringify(updated));
+  };
+
+  const handleCopy = async () => {
+    if (output?.content) {
+      await navigator.clipboard.writeText(output.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleDownload = (format: "md" | "txt") => {
+    if (!output) return;
+    const blob = new Blob([output.content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${output.title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.${format}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const loadFromHistory = (item: HistoryItem) => {
+    setContentType(item.contentType);
+    setTopic(item.topic);
+    setOutput({ title: item.title, content: item.content });
+    setShowHistory(false);
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem("sda-content-history");
+  };
 
   const contentTypes = [
     { id: "sermon", label: "Sermon" },
@@ -26,6 +90,14 @@ export default function Home() {
     "Sabbath School",
     "Small Group",
   ];
+
+  const contentTypeIcons: Record<string, string> = {
+    sermon: "📖",
+    devotional: "☀️",
+    bibleStudy: "📚",
+    prayer: "🙏",
+    announcement: "📢",
+  };
 
   const handleGenerate = async () => {
     if (!topic) {
@@ -51,6 +123,7 @@ export default function Home() {
 
       const data = await response.json();
       setOutput(data);
+      saveToHistory(data);
     } catch (error) {
       console.error("Error:", error);
       setOutput({
@@ -63,87 +136,167 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="app-wrapper">
       <header>
-        <div className="container">
-          <h1>⛪ SDA Content Generator</h1>
-          <p>AI-powered content for Seventh-day Adventist Churches</p>
+        <div className="container header-content">
+          <div className="logo">
+            <span className="logo-icon">⛪</span>
+            <div>
+              <h1>SDA Content Generator</h1>
+              <p>AI-powered content for Seventh-day Adventist Churches</p>
+            </div>
+          </div>
+          <button 
+            className="history-toggle"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            📋 History {history.length > 0 && <span className="badge">{history.length}</span>}
+          </button>
         </div>
       </header>
 
-      <main className="container">
-        <section className="form-section">
-          <h2 style={{ marginBottom: "1.5rem", color: "#2D5016" }}>
-            What would you like to create?
-          </h2>
-
-          <div className="content-types">
-            {contentTypes.map((type) => (
-              <button
-                key={type.id}
-                className={`type-btn ${contentType === type.id ? "active" : ""}`}
-                onClick={() => setContentType(type.id)}
-              >
-                {type.label}
-              </button>
-            ))}
+      {showHistory && (
+        <div className="history-panel">
+          <div className="history-header">
+            <h3>Recent Content</h3>
+            {history.length > 0 && (
+              <button className="clear-btn" onClick={clearHistory}>Clear</button>
+            )}
           </div>
-
-          <div className="form-group">
-            <label>Topic *</label>
-            <input
-              type="text"
-              placeholder="e.g., Faith, Prayer, Love, Stewardship"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Scripture (optional)</label>
-            <input
-              type="text"
-              placeholder="e.g., John 3:16, Romans 12:1-2"
-              value={scripture}
-              onChange={(e) => setScripture(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Target Audience</label>
-            <select
-              value={targetAudience}
-              onChange={(e) => setTargetAudience(e.target.value)}
-            >
-              {audiences.map((aud) => (
-                <option key={aud} value={aud}>
-                  {aud}
-                </option>
+          {history.length === 0 ? (
+            <p className="history-empty">No history yet</p>
+          ) : (
+            <div className="history-list">
+              {history.map((item) => (
+                <button
+                  key={item.id}
+                  className="history-item"
+                  onClick={() => loadFromHistory(item)}
+                >
+                  <span className="history-icon">{contentTypeIcons[item.contentType]}</span>
+                  <div className="history-info">
+                    <span className="history-title">{item.topic}</span>
+                    <span className="history-meta">{item.timestamp}</span>
+                  </div>
+                </button>
               ))}
-            </select>
-          </div>
+            </div>
+          )}
+        </div>
+      )}
 
-          <button
-            className="generate-btn"
-            onClick={handleGenerate}
-            disabled={loading}
-          >
-            {loading ? "Generating..." : "Generate Content ✨"}
-          </button>
-        </section>
+      <main className="container">
+        <div className="main-layout">
+          <section className="form-section">
+            <h2>What would you like to create?</h2>
 
-        {loading && (
-          <div className="loading">
-            <p>Creating your content... this may take a moment.</p>
-          </div>
-        )}
+            <div className="content-types">
+              {contentTypes.map((type) => (
+                <button
+                  key={type.id}
+                  className={`type-btn ${contentType === type.id ? "active" : ""}`}
+                  onClick={() => setContentType(type.id)}
+                >
+                  <span className="type-icon">{contentTypeIcons[type.id]}</span>
+                  {type.label}
+                </button>
+              ))}
+            </div>
 
-        {output && !loading && (
-          <section className="output-section">
-            <h3>{output.title}</h3>
-            <div className="output-content">{output.content}</div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Topic *</label>
+                <input
+                  type="text"
+                  placeholder="e.g., Faith, Prayer, Love, Stewardship"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Target Audience</label>
+                <select
+                  value={targetAudience}
+                  onChange={(e) => setTargetAudience(e.target.value)}
+                >
+                  {audiences.map((aud) => (
+                    <option key={aud} value={aud}>
+                      {aud}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Scripture (optional)</label>
+              <input
+                type="text"
+                placeholder="e.g., John 3:16, Romans 12:1-2"
+                value={scripture}
+                onChange={(e) => setScripture(e.target.value)}
+              />
+            </div>
+
+            <button
+              className="generate-btn"
+              onClick={handleGenerate}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  Generating...
+                </>
+              ) : (
+                <>✨ Generate Content</>
+              )}
+            </button>
           </section>
-        )}
+
+          {loading && (
+            <div className="loading">
+              <div className="loading-animation">
+                <div className="pulse-ring"></div>
+                <span>✝️</span>
+              </div>
+              <p>Creating your content...</p>
+            </div>
+          )}
+
+          {output && !loading && (
+            <section className="output-section">
+              <div className="output-header">
+                <h3>{output.title}</h3>
+                <div className="output-actions">
+                  <button 
+                    className="action-btn" 
+                    onClick={handleCopy}
+                    title="Copy to clipboard"
+                  >
+                    {copied ? "✓ Copied" : "📋 Copy"}
+                  </button>
+                  <button 
+                    className="action-btn"
+                    onClick={() => handleDownload("md")}
+                    title="Download as Markdown"
+                  >
+                    📥 MD
+                  </button>
+                  <button 
+                    className="action-btn"
+                    onClick={() => handleDownload("txt")}
+                    title="Download as Text"
+                  >
+                    📥 TXT
+                  </button>
+                </div>
+              </div>
+              <div className="output-content">{output.content}</div>
+            </section>
+          )}
+        </div>
       </main>
 
       <footer>
