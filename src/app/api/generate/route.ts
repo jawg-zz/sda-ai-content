@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
     case "bulletin":
       userPrompt = `Generate a weekly church bulletin for ${targetAudience}. Topic: "${topic}". ${serviceTime ? `Service time: ${serviceTime}.` : ""} Include: welcome message, service times, upcoming events, announcements, and prayer requests. Make it welcoming, well-organized, and ready to print.`;
       break;
+    case "bible":
+      userPrompt = `Provide a detailed Bible study on "${topic}". Include the full KJV scripture text, context, and application for ${targetAudience}.`;
+      break;
     default:
       userPrompt = `Generate content for ${targetAudience}. Topic: "${topic}". Type: ${contentType}.`;
   }
@@ -358,6 +361,48 @@ ${scripture ? `**Scripture Reading:** ${scripture}` : "**Scripture Reading:** To
 ---
 
 *Demo content - Add your OpenAI API key to get AI-generated content*`,
+
+    bible: `# Bible Study: ${topic}
+
+## Scripture Reading
+
+*Select a passage to read aloud*
+
+## Introduction
+
+This Bible study explores the theme of "${topic}" and its relevance to our spiritual walk.
+
+## Main Scripture
+
+> "Your word is a lamp to my feet and a light to my path." - Psalm 119:105
+
+## Key Points
+
+1. **Understanding the Context**
+   - When was this written?
+   - Who was the audience?
+   
+2. **The Message for Today**
+   - What does this mean for us?
+   - How can we apply this?
+
+3. **Personal Reflection**
+   - How does this speak to your life?
+   - What changes do you need to make?
+
+## Discussion Questions
+
+- What stood out to you most from this passage?
+- How can you apply this teaching this week?
+- Who can you share this with?
+
+## Closing Prayer
+
+Lord, open our hearts to your Word. Help us to understand and apply these truths to our daily lives. In Jesus' name, Amen.
+
+---
+
+*KJV - King James Version*`,
   };
 
   return {
@@ -496,6 +541,13 @@ function getDefaultSuggestions(contentType: string): string[] {
       "Midweek Meeting",
       "Community Outreach",
       "Youth Fellowship"
+    ],
+    bible: [
+      "Psalm 23 - The Lord is My Shepherd",
+      "John 3:16 - For God So Loved",
+      "Proverbs 3:5-6 - Trust in the Lord",
+      "Romans 8:28 - All Things Work Together",
+      "Philippians 4:13 - I Can Do All Things"
     ],
   };
   return suggestions[contentType] || suggestions.sermon;

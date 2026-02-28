@@ -37,6 +37,15 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeading, setActiveHeading] = useState("");
+  const [showBibleBrowser, setShowBibleBrowser] = useState(false);
+  const [selectedBook, setSelectedBook] = useState("");
+  const [selectedChapter, setSelectedChapter] = useState("");
+  const [selectedVerse, setSelectedVerse] = useState("");
+  const [bibleVerse, setBibleVerse] = useState<{ reference: string; text: string } | null>(null);
+  const [bibleSearchQuery, setBibleSearchQuery] = useState("");
+  const [bibleSearchResults, setBibleSearchResults] = useState<{ reference: string; text: string }[]>([]);
+  const [bibleLoading, setBibleLoading] = useState(false);
+  const [clickedScripture, setClickedScripture] = useState<{ reference: string; text: string } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -154,6 +163,7 @@ export default function Home() {
     { id: "sermon", label: "Sermon" },
     { id: "devotional", label: "Devotional" },
     { id: "bibleStudy", label: "Bible Study" },
+    { id: "bible", label: "Bible" },
     { id: "prayer", label: "Prayer" },
     { id: "announcement", label: "Announcement" },
     { id: "bulletin", label: "Bulletin" },
@@ -175,6 +185,7 @@ export default function Home() {
     prayer: "🙏",
     announcement: "📢",
     bulletin: "📋",
+    bible: "✝️",
   };
 
   const fetchSuggestions = async () => {
