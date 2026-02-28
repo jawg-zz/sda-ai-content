@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.AI_API_KEY;
   const apiUrl = process.env.OPENAI_API_URL || "https://api.openai.com/v1";
 
-  // Use demo content if no API key or invalid key
-  if (!apiKey || !apiKey.trim() || apiKey.length < 10) {
+  // Use demo content if no API key
+  if (!apiKey || !apiKey.trim()) {
     // Return demo content
     return NextResponse.json(
       generateDemoContent(contentType, topic, scripture, targetAudience)
@@ -59,6 +59,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    console.log("Calling AI API with:", { apiUrl, contentType, topic: topic?.substring(0, 30) });
+    
     const response = await fetch(`${apiUrl}/chat/completions`, {
       method: "POST",
       headers: {
