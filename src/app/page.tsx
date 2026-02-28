@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface HistoryItem {
   id: number;
@@ -310,38 +312,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="output-body">
-                {output.content.split('\n\n').map((paragraph, idx) => {
-                  if (paragraph.startsWith('# ')) {
-                    return <h2 key={idx} className="ob-h2">{paragraph.replace(/^# /, '')}</h2>;
-                  }
-                  if (paragraph.startsWith('## ')) {
-                    return <h3 key={idx} className="ob-h3">{paragraph.replace(/^## /, '')}</h3>;
-                  }
-                  if (paragraph.startsWith('### ')) {
-                    return <h4 key={idx} className="ob-h4">{paragraph.replace(/^### /, '')}</h4>;
-                  }
-                  if (paragraph.startsWith('* ') || paragraph.startsWith('- ')) {
-                    const items = paragraph.split('\n').filter(l => l.startsWith('* ') || l.startsWith('- '));
-                    return (
-                      <ul key={idx} className="ob-list">
-                        {items.map((item, i) => (
-                          <li key={i}>{item.replace(/^[-*] /, '')}</li>
-                        ))}
-                      </ul>
-                    );
-                  }
-                  if (/^\d+\. /.test(paragraph)) {
-                    const items = paragraph.split('\n').filter(l => /^\d+\. /.test(l));
-                    return (
-                      <ol key={idx} className="ob-list ordered">
-                        {items.map((item, i) => (
-                          <li key={i}>{item.replace(/^\d+\. /, '')}</li>
-                        ))}
-                      </ol>
-                    );
-                  }
-                  return <p key={idx} className="ob-p">{paragraph}</p>;
-                })}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {output.content}
+                </ReactMarkdown>
               </div>
             </section>
           )}

@@ -450,20 +450,26 @@ header {
   line-height: 1.85;
 }
 
-.output-body h2.ob-h2 {
+/* React Markdown Styles */
+.output-body h1,
+.output-body h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
   color: var(--primary);
   margin: 2rem 0 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--gold);
 }
 
-.output-body h2.ob-h2:first-child {
+.output-body h1:first-child,
+.output-body h2:first-child {
   margin-top: 0;
 }
 
-.output-body h3.ob-h3 {
+.output-body h2 {
+  font-size: 1.6rem;
+}
+
+.output-body h3 {
   font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
   color: var(--primary-dark);
@@ -471,20 +477,20 @@ header {
   font-weight: 600;
 }
 
-.output-body h4.ob-h4 {
+.output-body h4 {
   font-size: 1.05rem;
   color: var(--text);
   margin: 1.5rem 0 0.5rem;
   font-weight: 600;
 }
 
-.output-body p.ob-p {
+.output-body p {
   margin-bottom: 1rem;
   color: var(--text);
 }
 
-.output-body ul.ob-list,
-.output-body ol.ob-list {
+.output-body ul,
+.output-body ol {
   margin: 0.75rem 0 1rem 1.5rem;
   padding-left: 0.5rem;
 }
@@ -494,21 +500,83 @@ header {
   padding-left: 0.25rem;
 }
 
-.output-body ul.ob-list li::marker {
+.output-body ul li::marker {
   color: var(--gold);
 }
 
-.output-body ol.ob-list li::marker {
+.output-body ol li::marker {
   color: var(--primary);
   font-weight: 500;
 }
 
-.output-body .scripture-ref {
-  background: linear-gradient(120deg, var(--gold-light) 0%, #FEF3D9 100%);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
+.output-body strong {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.output-body em {
   font-style: italic;
   color: var(--secondary);
+}
+
+.output-body code {
+  background: var(--cream-dark);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.output-body pre {
+  background: var(--primary-dark);
+  color: var(--cream);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.output-body pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.output-body blockquote {
+  border-left: 4px solid var(--gold);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.output-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+.output-body a {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+.output-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.output-body th,
+.output-body td {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.output-body th {
+  background: var(--cream);
+  font-weight: 600;
 }
 
 /* Footer */
