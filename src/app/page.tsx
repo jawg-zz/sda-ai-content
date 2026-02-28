@@ -212,6 +212,29 @@ export default function Home() {
     }
   };
 
+  // Handle scripture click - fetch verse from Bible API
+  const handleScriptureClick = async (reference: string) => {
+    // Parse reference (e.g., "John 3:16" or "Psalm 23:1-4")
+    const match = reference.match(/^(\d?\s?[A-Za-z]+)\s+(\d+):(\d+)(?:-(\d+))?$/i);
+    if (!match) return;
+    
+    const [, book, chapter, verse] = match;
+    try {
+      const response = await fetch(`/api/bible?action=verse&book=${encodeURIComponent(book)}&chapter=${chapter}&verse=${verse}`);
+      const data = await response.json();
+      if (data.text) {
+        setClickedScripture({ reference: data.reference, text: data.text });
+      }
+    } catch (error) {
+      console.error("Error fetching scripture:", error);
+    }
+  };
+
+  // Close scripture modal
+  const closeScriptureModal = () => {
+    setClickedScripture(null);
+  };
+
   const handleGenerate = async () => {
     if (!topic) {
       alert("Please enter a topic");
@@ -495,6 +518,36 @@ export default function Home() {
                         const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                         return <h3 id={id}>{children}</h3>;
                       },
+                      p: ({ children }) => {
+                        // Make scripture references clickable
+                        const text = String(children);
+                        const scriptureRegex = /([A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)/g;
+                        const parts = text.split(scriptureRegex);
+                        
+                        if (parts.length === 1) {
+                          return <p>{children}</p>;
+                        }
+                        
+                        return (
+                          <p>
+                            {parts.map((part, i) => {
+                              const match = part.match(/^([A-Z][a-z]+(?:\s+\d+)?\s+\d+:\d+(?:-\d+)?)$/);
+                              if (match) {
+                                return (
+                                  <button
+                                    key={i}
+                                    className="scripture-link"
+                                    onClick={() => handleScriptureClick(match[1])}
+                                  >
+                                    {match[1]}
+                                  </button>
+                                );
+                              }
+                              return part;
+                            })}
+                          </p>
+                        );
+                      },
                     }}
                   >
                     {output.content}
@@ -505,6 +558,18 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* Scripture Modal */}
+      {clickedScripture && (
+        <div className="scripture-modal-overlay" onClick={closeScriptureModal}>
+          <div className="scripture-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeScriptureModal}>×</button>
+            <h3>{clickedScripture.reference}</h3>
+            <p className="scripture-version">King James Version (KJV)</p>
+            <div className="scripture-text">{clickedScripture.text}</div>
+          </div>
+        </div>
+      )}
 
       <footer>
         <p>© 2026 SDA Content Generator | Built for the Church 🌿</p>
