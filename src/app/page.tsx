@@ -217,10 +217,10 @@ export default function Home() {
       <header>
         <div className="container header-content">
           <div className="logo">
-            <span className="logo-icon">⛪</span>
+            <span className="logo-icon">🐑</span>
             <div>
               <h1>SDA Content Generator</h1>
-              <p>AI-powered content for Seventh-day Adventist Churches</p>
+              <p className="logo-subtitle">Seventh-day Adventist Church</p>
             </div>
           </div>
           <button 

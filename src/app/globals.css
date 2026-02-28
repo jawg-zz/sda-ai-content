@@ -107,6 +107,13 @@ header {
   color: var(--gold-light);
 }
 
+.logo .logo-subtitle {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
 .history-toggle {
   display: flex;
   align-items: center;
