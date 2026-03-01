@@ -142,10 +142,33 @@ const styles = StyleSheet.create({
   nestedListItem: { flexDirection: 'row', marginBottom: 4, paddingLeft: 16 },
   nestedBullet: { width: 12, fontSize: 10, color: colors.textMuted },
   nestedText: { fontSize: 10, lineHeight: 1.6, color: colors.textLight, flex: 1 },
+  
+  // Horizontal Rule
+  hr: { borderBottomWidth: 1, borderBottomColor: colors.border, marginVertical: 16 },
+  
+  // Checkbox Item
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  checkboxBox: { width: 14, height: 14, borderWidth: 1, borderColor: colors.primary, borderRadius: 2, marginRight: 8, alignItems: 'center', justifyContent: 'center' },
+  checkboxChecked: { fontSize: 10, color: colors.primary, fontWeight: 'bold' },
+  checkboxUnchecked: { fontSize: 10, color: colors.textMuted },
+  checkboxText: { fontSize: 11, lineHeight: 1.6, color: colors.text, flex: 1 },
+  
+  // Key Point / Highlight
+  keyPointContainer: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, paddingLeft: 0 },
+  keyPointBulletAlt: { width: 16, fontSize: 12, color: colors.gold, fontWeight: 'bold', marginRight: 6 },
+  keyPointTextAlt: { fontSize: 11, lineHeight: 1.7, color: colors.text, flex: 1 },
+  
+  // Emphasized text
+  emphasized: { fontSize: 11, fontStyle: 'italic', color: colors.textLight, marginBottom: 10, textAlign: 'center' },
+  
+  // Subheadings level 4-6
+  subheading4: { fontSize: 12, fontWeight: 'bold', color: colors.primaryDark, marginBottom: 8, marginTop: 14, paddingBottom: 3, borderBottomWidth: 1, borderBottomColor: colors.borderLight },
+  subheading5: { fontSize: 11, fontWeight: 'bold', color: colors.text, marginBottom: 6, marginTop: 12, textTransform: 'uppercase', letterSpacing: 0.5 },
+  subheading6: { fontSize: 11, fontWeight: 'bold', color: colors.textLight, marginBottom: 6, marginTop: 10, fontStyle: 'italic' },
 });
 
 interface Heading { id: string; text: string; level: number; }
-interface ContentItem { type: string; content: string; verseText?: string; label?: string; indent?: number; }
+interface ContentItem { type: string; content: string; verseText?: string; label?: string; indent?: number; checked?: boolean; }
 interface PDFDocumentProps { title: string; content: string; contentType: string; headings?: Heading[]; scriptureVerses?: Record<string, string>; }
 
 const parseContent = (content: string): { items: ContentItem[], headings: Heading[] } => {
@@ -158,8 +181,14 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
     const trimmed = line.trim();
     if (!trimmed) continue;
     
-    // Handle markdown headers
-    if (trimmed.startsWith('# ') && !trimmed.startsWith('##')) {
+    // Horizontal rule
+    if (trimmed.match(/^[-*_]{3,}$/)) {
+      items.push({ type: 'hr', content: '' });
+      continue;
+    }
+    
+    // Handle markdown headers (all levels)
+    if (trimmed.startsWith('# ')) {
       headingCounter++;
       headings.push({ id: 'h'+headingCounter, text: trimmed.substring(2), level: 1 });
       items.push({ type: 'heading', content: trimmed.substring(2) });
@@ -171,12 +200,23 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
       headingCounter++;
       headings.push({ id: 'h'+headingCounter, text: trimmed.substring(4), level: 3 });
       items.push({ type: 'subheading3', content: trimmed.substring(4) });
+    } else if (trimmed.startsWith('#### ')) {
+      headingCounter++;
+      headings.push({ id: 'h'+headingCounter, text: trimmed.substring(5), level: 4 });
+      items.push({ type: 'subheading4', content: trimmed.substring(5) });
+    } else if (trimmed.startsWith('##### ')) {
+      headingCounter++;
+      headings.push({ id: 'h'+headingCounter, text: trimmed.substring(6), level: 5 });
+      items.push({ type: 'subheading5', content: trimmed.substring(6) });
+    } else if (trimmed.startsWith('###### ')) {
+      headingCounter++;
+      headings.push({ id: 'h'+headingCounter, text: trimmed.substring(7), level: 6 });
+      items.push({ type: 'subheading6', content: trimmed.substring(7) });
     } 
     // Handle nested bullet points (indented with spaces) - detect sub-items
     else if (trimmed.match(/^(\s{2,})[-*•]\s/)) {
-      const indentLevel = (trimmed.match(/^(\s*)/)?.[1]?.length || 0);
       const content = trimmed.replace(/^\s*[-*•]\s*/, '');
-      items.push({ type: 'listNested', content, indent: indentLevel });
+      items.push({ type: 'listNested', content, indent: 2 });
     }
     // Handle bullet points with bold content (e.g., • **The Doctrine:**)
     else if (trimmed.match(/^[-*•]\s+\*\*(.+?)\*\*[:：]/)) {
@@ -185,9 +225,16 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
         items.push({ type: 'boldBullet', label: match[1], content: match[2] });
       }
     }
-    // Handle numbered items
+    // Handle numbered items (including nested)
     else if (trimmed.match(/^\d+\.\s/)) {
       items.push({ type: 'numbered', content: trimmed.replace(/^\d+\.\s/, '') });
+    }
+    // Handle task list checkboxes: - [ ] or - [x]
+    else if (trimmed.match(/^[-*]\s+\[[ xX]\]\s/)) {
+      const match = trimmed.match(/^[-*]\s+\[([ xX])\]\s(.*)$/);
+      if (match) {
+        items.push({ type: 'checkbox', checked: match[1].toLowerCase() === 'x', content: match[2] });
+      }
     }
     // Handle simple bullet points
     else if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
@@ -213,13 +260,31 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
         items.push({ type: 'boldLabel', label: match[1], content: match[2] });
       }
     }
+    // Handle emphasis patterns - italic, bold, strikethrough
+    else if (trimmed.match(/^[*_]{1,3}(.+?)[*_]{1,3}$/)) {
+      // Full line emphasis - treat as styled paragraph
+      items.push({ type: 'emphasized', content: trimmed });
+    }
     // Handle prayer lines
     else if (trimmed.toLowerCase().includes('prayer') && trimmed.length < 80 && !trimmed.includes(':')) {
       items.push({ type: 'prayer', content: trimmed });
     }
+    // Handle key points / highlights with special markers
+    else if (trimmed.match(/^[-*]\s+◆\s/) || trimmed.match(/^[-*]\s+●\s/)) {
+      items.push({ type: 'keyPoint', content: trimmed.replace(/^[-*]\s+[◆●]\s/, '') });
+    }
     // Default to paragraph
     else {
-      items.push({ type: 'paragraph', content: trimmed });
+      // Clean inline markdown before storing
+      let cleaned = trimmed
+        .replace(/\*\*\*(.+?)\*\*\*/g, '$1')  // Bold italic -> text
+        .replace(/\*\*(.+?)\*\*/g, '$1')       // Bold
+        .replace(/\*(.+?)\*/g, '$1')           // Italic
+        .replace(/_(.+?)_/g, '$1')             // Italic underscore
+        .replace(/~~(.+?)~~/g, '$1')           // Strikethrough
+        .replace(/`(.+?)`/g, '$1');            // Inline code
+      
+      items.push({ type: 'paragraph', content: cleaned });
     }
   }
   return { items, headings };
@@ -310,6 +375,41 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
           case 'subheading3':
             elements.push(<View key={elements.length} style={styles.spacerSmall}><Text style={{...styles.sectionTitleSmall, fontSize: 12, marginTop: 12}}>{item.content}</Text></View>);
             break;
+          case 'subheading4':
+            elements.push(<View key={elements.length} style={styles.section}><Text style={styles.subheading4}>{item.content}</Text></View>);
+            break;
+          case 'subheading5':
+            elements.push(<View key={elements.length} style={styles.section}><Text style={styles.subheading5}>{item.content}</Text></View>);
+            break;
+          case 'subheading6':
+            elements.push(<View key={elements.length} style={styles.section}><Text style={styles.subheading6}>{item.content}</Text></View>);
+            break;
+          case 'hr':
+            elements.push(<View key={elements.length} style={styles.hr} />);
+            break;
+          case 'checkbox':
+            elements.push(
+              <View key={elements.length} style={styles.checkboxContainer}>
+                <View style={styles.checkboxBox}>
+                  <Text style={item.checked ? styles.checkboxChecked : styles.checkboxUnchecked}>
+                    {item.checked ? '✓' : ''}
+                  </Text>
+                </View>
+                <Text style={styles.checkboxText}>{item.content}</Text>
+              </View>
+            );
+            break;
+          case 'keyPoint':
+            elements.push(
+              <View key={elements.length} style={styles.keyPointContainer}>
+                <Text style={styles.keyPointBullet}>◆</Text>
+                <Text style={styles.keyPointText}>{item.content}</Text>
+              </View>
+            );
+            break;
+          case 'emphasized':
+            elements.push(<Text key={elements.length} style={styles.emphasized}>{item.content}</Text>);
+            break;
           case 'scripture':
             elements.push(
               <View key={elements.length} style={styles.scriptureBox}>
@@ -328,11 +428,9 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
             break;
           case 'keypoint':
             elements.push(
-              <View key={elements.length} style={styles.keyPointsBox}>
-                <View style={styles.keyPointItem}>
-                  <Text style={styles.keyPointBullet}>◆</Text>
-                  <Text style={styles.keyPointText}>{item.content}</Text>
-                </View>
+              <View key={elements.length} style={styles.keyPointContainer}>
+                <Text style={styles.keyPointBulletAlt}>◆</Text>
+                <Text style={styles.keyPointTextAlt}>{item.content}</Text>
               </View>
             );
             break;
