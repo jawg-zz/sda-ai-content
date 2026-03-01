@@ -98,7 +98,7 @@ const popularVerses = [
 ];
 
 export default function BibleBrowser({ onVerseSelect, onClose }: BibleBrowserProps) {
-  const [activeTab, setActiveTab] = useState<"browse" | "search" | "popular" | "favorites">("browse");
+  const [activeTab, setActiveTab] = useState<"browse" | "search" | "popular" | "favorites" | "recent">("browse");
   const [selectedBook, setSelectedBook] = useState("");
   const [selectedChapter, setSelectedChapter] = useState("");
   const [selectedVerse, setSelectedVerse] = useState("");
@@ -217,6 +217,12 @@ export default function BibleBrowser({ onVerseSelect, onClose }: BibleBrowserPro
           onClick={() => setActiveTab('favorites')}
         >
           ♥ Favorites
+        </button>
+        <button 
+          className={`bible-tab ${activeTab === 'recent' ? 'active' : ''}`}
+          onClick={() => setActiveTab('recent')}
+        >
+          🕐 Recent
         </button>
       </div>
 
@@ -413,6 +419,33 @@ export default function BibleBrowser({ onVerseSelect, onClose }: BibleBrowserPro
               </div>
             ) : (
               <p className="no-favorites">No favorites yet. Click ♥ on any verse to save it.</p>
+            )}
+          </div>
+        )}
+
+        {/* Recent Tab */}
+        {activeTab === 'recent' && (
+          <div className="bible-recent">
+            <h4>Recently Viewed</h4>
+            {recentVerses.length > 0 ? (
+              <div className="recent-list-full">
+                {recentVerses.map((verse, i) => (
+                  <button 
+                    key={i} 
+                    className="recent-item-full"
+                    onClick={() => {
+                      const [book, rest] = verse.reference.split(' ');
+                      const [chap, v] = rest.split(':');
+                      fetchVerse(book, chap, v);
+                    }}
+                  >
+                    <span className="recent-ref">{verse.reference}</span>
+                    <span className="recent-text-preview">{verse.text.substring(0, 60)}...</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="no-recent">No recent verses. Browse the Bible to see your history.</p>
             )}
           </div>
         )}

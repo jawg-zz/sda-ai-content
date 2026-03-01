@@ -40,7 +40,10 @@ export default function Home() {
   const [activeHeading, setActiveHeading] = useState("");
   const [showBibleBrowser, setShowBibleBrowser] = useState(false);
   const [clickedScripture, setClickedScripture] = useState<{ reference: string; text: string } | null>(null);
+  const [hasDraft, setHasDraft] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const DRAFT_KEY = "sda-content-draft";
 
   useEffect(() => {
     const saved = localStorage.getItem("sda-content-history");
@@ -48,6 +51,39 @@ export default function Home() {
       setHistory(JSON.parse(saved));
     }
   }, []);
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(DRAFT_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setContentType(draft.contentType || "sermon");
+        setTopic(draft.topic || "");
+        setServiceTime(draft.serviceTime || "");
+        setScripture(draft.scripture || "");
+        setTargetAudience(draft.targetAudience || "General Church");
+        setHasDraft(true);
+      } catch (e) {
+        console.error("Error restoring draft:", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const draft = { contentType, topic, serviceTime, scripture, targetAudience };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    setHasDraft(true);
+  }, [contentType, topic, serviceTime, scripture, targetAudience]);
+
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
+    setContentType("sermon");
+    setTopic("");
+    setServiceTime("");
+    setScripture("");
+    setTargetAudience("General Church");
+  };
 
   // Load Verse of the Day on mount
   useEffect(() => {
@@ -119,6 +155,29 @@ export default function Home() {
 
     setHeadings(extracted);
   }, [output]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (!loading && topic) {
+          handleGenerate();
+        }
+      }
+      if (e.key === "Escape") {
+        if (clickedScripture) {
+          setClickedScripture(null);
+        } else if (showBibleBrowser) {
+          setShowBibleBrowser(false);
+        } else if (showHistory) {
+          setShowHistory(false);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [loading, topic, clickedScripture, showBibleBrowser, showHistory]);
 
   const saveToHistory = (data: { title: string; content: string }) => {
     const newItem: HistoryItem = {
@@ -509,6 +568,14 @@ export default function Home() {
                 <>✨ Generate Content</>
               )}
             </button>
+            {hasDraft && (
+              <button
+                className="clear-draft-btn"
+                onClick={clearDraft}
+              >
+                🗑️ Clear Draft
+              </button>
+            )}
           </section>
 
           {loading && (
