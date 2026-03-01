@@ -50,6 +50,7 @@ export default function Home() {
   const [hasDraft, setHasDraft] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const [refining, setRefining] = useState(false);
   const [versions, setVersions] = useState<{ title: string; content: string }[]>([]);
   const [darkMode, setDarkMode] = useState(false);
@@ -201,6 +202,10 @@ export default function Home() {
           handleGenerate();
         }
       }
+      if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        handleCopy();
+      }
       if (e.key === "Escape") {
         if (clickedScripture) {
           setClickedScripture(null);
@@ -208,13 +213,15 @@ export default function Home() {
           setShowBibleBrowser(false);
         } else if (showHistory) {
           setShowHistory(false);
+        } else if (showShortcuts) {
+          setShowShortcuts(false);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [loading, topic, clickedScripture, showBibleBrowser, showHistory]);
+  }, [loading, topic, clickedScripture, showBibleBrowser, showHistory, showShortcuts]);
 
   const saveToHistory = (data: { title: string; content: string }) => {
     const newItem: HistoryItem = {
@@ -562,6 +569,13 @@ export default function Home() {
             title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
             {darkMode ? "☀️" : "🌙"}
+          </button>
+          <button 
+            className="dark-mode-toggle"
+            onClick={() => setShowShortcuts(true)}
+            title="Keyboard shortcuts"
+          >
+            ⌨️
           </button>
         </div>
       </header>
@@ -931,6 +945,30 @@ export default function Home() {
             <h3>{clickedScripture.reference}</h3>
             <p className="scripture-version">King James Version (KJV)</p>
             <div className="scripture-text">{clickedScripture.text}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div className="scripture-modal-overlay" onClick={() => setShowShortcuts(false)}>
+          <div className="scripture-modal shortcuts-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowShortcuts(false)}>×</button>
+            <h3>Keyboard Shortcuts</h3>
+            <div className="shortcuts-list">
+              <div className="shortcut-item">
+                <span className="shortcut-key">Ctrl + Enter</span>
+                <span className="shortcut-desc">Generate content</span>
+              </div>
+              <div className="shortcut-item">
+                <span className="shortcut-key">Escape</span>
+                <span className="shortcut-desc">Close modals</span>
+              </div>
+              <div className="shortcut-item">
+                <span className="shortcut-key">Ctrl + S</span>
+                <span className="shortcut-desc">Copy content</span>
+              </div>
+            </div>
           </div>
         </div>
       )}
