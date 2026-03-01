@@ -22,6 +22,13 @@ interface HistoryItem {
   timestamp: string;
 }
 
+interface Template {
+  id: string;
+  name: string;
+  contentType: string;
+  targetAudience: string;
+}
+
 export default function Home() {
   const [contentType, setContentType] = useState("sermon");
   const [topic, setTopic] = useState("");
@@ -41,14 +48,24 @@ export default function Home() {
   const [showBibleBrowser, setShowBibleBrowser] = useState(false);
   const [clickedScripture, setClickedScripture] = useState<{ reference: string; text: string } | null>(null);
   const [hasDraft, setHasDraft] = useState(false);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [showTemplateManager, setShowTemplateManager] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const DRAFT_KEY = "sda-content-draft";
+  const TEMPLATES_KEY = "sda-content-templates";
 
   useEffect(() => {
     const saved = localStorage.getItem("sda-content-history");
     if (saved) {
       setHistory(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedTemplates = localStorage.getItem(TEMPLATES_KEY);
+    if (savedTemplates) {
+      setTemplates(JSON.parse(savedTemplates));
     }
   }, []);
 
@@ -243,6 +260,36 @@ export default function Home() {
     localStorage.removeItem("sda-content-history");
   };
 
+  const saveAsTemplate = () => {
+    const name = prompt("Enter template name:");
+    if (!name || name.trim() === "") return;
+    
+    const newTemplate: Template = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      contentType,
+      targetAudience,
+    };
+    
+    const updatedTemplates = [...templates, newTemplate];
+    setTemplates(updatedTemplates);
+    localStorage.setItem(TEMPLATES_KEY, JSON.stringify(updatedTemplates));
+    alert("Template saved!");
+  };
+
+  const loadTemplate = (template: Template) => {
+    setContentType(template.contentType);
+    setTargetAudience(template.targetAudience);
+    setShowTemplateManager(false);
+  };
+
+  const deleteTemplate = (id: string) => {
+    if (!confirm("Delete this template?")) return;
+    const updatedTemplates = templates.filter(t => t.id !== id);
+    setTemplates(updatedTemplates);
+    localStorage.setItem(TEMPLATES_KEY, JSON.stringify(updatedTemplates));
+  };
+
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -418,6 +465,12 @@ export default function Home() {
             📋 History {history.length > 0 && <span className="badge">{history.length}</span>}
           </button>
           <button 
+            className="history-toggle"
+            onClick={() => setShowTemplateManager(!showTemplateManager)}
+          >
+            📑 Templates {templates.length > 0 && <span className="badge">{templates.length}</span>}
+          </button>
+          <button 
             className="history-toggle bible-toggle"
             onClick={() => setShowBibleBrowser(!showBibleBrowser)}
           >
@@ -457,6 +510,44 @@ export default function Home() {
                     <span className="history-meta">{item.timestamp}</span>
                   </div>
                 </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {showTemplateManager && (
+        <div className="history-panel">
+          <div className="history-header">
+            <h3>Saved Templates</h3>
+            <button className="save-template-btn" onClick={saveAsTemplate}>
+              + Save Current
+            </button>
+          </div>
+          {templates.length === 0 ? (
+            <p className="history-empty">No templates saved yet</p>
+          ) : (
+            <div className="history-list">
+              {templates.map((template) => (
+                <div key={template.id} className="template-item">
+                  <button
+                    className="template-load-btn"
+                    onClick={() => loadTemplate(template)}
+                  >
+                    <span className="template-icon">{contentTypeIcons[template.contentType]}</span>
+                    <div className="history-info">
+                      <span className="history-title">{template.name}</span>
+                      <span className="history-meta">{template.contentType} • {template.targetAudience}</span>
+                    </div>
+                  </button>
+                  <button
+                    className="template-delete-btn"
+                    onClick={() => deleteTemplate(template.id)}
+                    title="Delete template"
+                  >
+                    🗑️
+                  </button>
+                </div>
               ))}
             </div>
           )}
