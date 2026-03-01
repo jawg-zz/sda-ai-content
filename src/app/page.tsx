@@ -51,6 +51,7 @@ export default function Home() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
   const [refining, setRefining] = useState(false);
+  const [versions, setVersions] = useState<{ title: string; content: string }[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -443,6 +444,7 @@ export default function Home() {
 
     setLoading(true);
     setOutput(null);
+    setVersions([]);
 
     try {
       // Simulate API call - in production, use Convex
@@ -482,6 +484,8 @@ export default function Home() {
   const handleRefine = async (refinement: string) => {
     if (!topic || !output) return;
 
+    setVersions((prev) => [...prev, output]);
+
     const refinementMap: Record<string, string> = {
       shorter: "Make this content shorter",
       longer: "Make this content longer with more details",
@@ -513,6 +517,15 @@ export default function Home() {
       setRefining(false);
     }
   };
+
+  const handleUndo = () => {
+    if (versions.length === 0) return;
+    const previousVersion = versions[versions.length - 1];
+    setVersions((prev) => prev.slice(0, -1));
+    setOutput(previousVersion);
+  };
+
+  const currentVersion = versions.length + 1;
 
   return (
     <div className="app-wrapper">
@@ -763,7 +776,7 @@ export default function Home() {
               </div>
               <div className="output-header">
                 <div className="output-title-wrap">
-                  <h3>{output.title}</h3>
+                  <h3>{output.title} {currentVersion > 1 && <span className="version-indicator">v{currentVersion}</span>}</h3>
                   <span className="output-stats">📄 {wordCount.toLocaleString()} words • ⏱️ ~{readingTime} min read</span>
                 </div>
                 <div className="output-actions">
@@ -815,6 +828,15 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
+                  {versions.length > 0 && (
+                    <button 
+                      className="action-btn undo-btn"
+                      onClick={handleUndo}
+                      title="Undo last refinement"
+                    >
+                      ↩️ Undo
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="output-layout">
