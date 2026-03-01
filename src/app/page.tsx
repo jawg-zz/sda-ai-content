@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { pdf } from "@react-pdf/renderer";
 import { PDFDocument } from "./components/PDFDocument";
+import BibleBrowser from "./components/BibleBrowser";
 
 interface Heading {
   id: string;
@@ -38,13 +39,6 @@ export default function Home() {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeading, setActiveHeading] = useState("");
   const [showBibleBrowser, setShowBibleBrowser] = useState(false);
-  const [selectedBook, setSelectedBook] = useState("");
-  const [selectedChapter, setSelectedChapter] = useState("");
-  const [selectedVerse, setSelectedVerse] = useState("");
-  const [bibleVerse, setBibleVerse] = useState<{ reference: string; text: string } | null>(null);
-  const [bibleSearchQuery, setBibleSearchQuery] = useState("");
-  const [bibleSearchResults, setBibleSearchResults] = useState<{ reference: string; text: string }[]>([]);
-  const [bibleLoading, setBibleLoading] = useState(false);
   const [clickedScripture, setClickedScripture] = useState<{ reference: string; text: string } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -374,61 +368,10 @@ export default function Home() {
       </header>
 
       {showBibleBrowser && (
-        <div className="bible-browser-panel">
-          <div className="bible-browser-header">
-            <h3>📖 Bible Browser</h3>
-            <button className="clear-btn" onClick={() => setShowBibleBrowser(false)}>Close</button>
-          </div>
-          
-          <div className="bible-search">
-            <input
-              type="text"
-              placeholder="Search verses..."
-              value={bibleSearchQuery}
-              onChange={(e) => setBibleSearchQuery(e.target.value)}
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter' && bibleSearchQuery.trim()) {
-                  setBibleLoading(true);
-                  try {
-                    const res = await fetch(`/api/bible?action=search&q=${encodeURIComponent(bibleSearchQuery)}`);
-                    const data = await res.json();
-                    setBibleSearchResults(data.results || []);
-                  } catch (err) {
-                    console.error("Search error:", err);
-                  } finally {
-                    setBibleLoading(false);
-                  }
-                }
-              }}
-            />
-          </div>
-
-          {bibleSearchResults.length > 0 ? (
-            <div className="bible-search-results">
-              {bibleSearchResults.map((result, idx) => (
-                <button
-                  key={idx}
-                  className="bible-result-item"
-                  onClick={() => {
-                    setClickedScripture(result);
-                    setShowBibleBrowser(false);
-                  }}
-                >
-                  <span className="bible-result-ref">{result.reference}</span>
-                  <span className="bible-result-text">{result.text.substring(0, 80)}...</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="bible-verse-of-day">
-              <h4>✝️ Verse of the Day</h4>
-              <div className="votd-verse" id="votd-container">
-                <p className="votd-ref">Loading...</p>
-              </div>
-              <p className="votd-kjv">King James Version</p>
-            </div>
-          )}
-        </div>
+        <BibleBrowser 
+          onVerseSelect={(verse) => setClickedScripture(verse)}
+          onClose={() => setShowBibleBrowser(false)}
+        />
       )}
 
       {showHistory && (
