@@ -131,10 +131,21 @@ const styles = StyleSheet.create({
   boldLabelContainer: { marginBottom: 10, paddingLeft: 0 },
   boldLabel: { fontSize: 11, fontWeight: 'bold', color: colors.primary, marginBottom: 4 },
   boldLabelText: { fontSize: 11, lineHeight: 1.7, color: colors.text },
+  
+  // Bold Bullet - for "• **Label:** content" format
+  boldBulletContainer: { marginBottom: 12, paddingLeft: 0 },
+  boldBulletRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 4 },
+  boldBulletLabel: { fontSize: 11, fontWeight: 'bold', color: colors.primary },
+  boldBulletText: { fontSize: 11, lineHeight: 1.7, color: colors.text, flex: 1, paddingLeft: 4 },
+  
+  // Nested List
+  nestedListItem: { flexDirection: 'row', marginBottom: 4, paddingLeft: 16 },
+  nestedBullet: { width: 12, fontSize: 10, color: colors.textMuted },
+  nestedText: { fontSize: 10, lineHeight: 1.6, color: colors.textLight, flex: 1 },
 });
 
 interface Heading { id: string; text: string; level: number; }
-interface ContentItem { type: string; content: string; verseText?: string; label?: string; }
+interface ContentItem { type: string; content: string; verseText?: string; label?: string; indent?: number; }
 interface PDFDocumentProps { title: string; content: string; contentType: string; headings?: Heading[]; scriptureVerses?: Record<string, string>; }
 
 const parseContent = (content: string): { items: ContentItem[], headings: Heading[] } => {
@@ -161,11 +172,17 @@ const parseContent = (content: string): { items: ContentItem[], headings: Headin
       headings.push({ id: 'h'+headingCounter, text: trimmed.substring(4), level: 3 });
       items.push({ type: 'subheading3', content: trimmed.substring(4) });
     } 
+    // Handle nested bullet points (indented with spaces) - detect sub-items
+    else if (trimmed.match(/^(\s{2,})[-*•]\s/)) {
+      const indentLevel = (trimmed.match(/^(\s*)/)?.[1]?.length || 0);
+      const content = trimmed.replace(/^\s*[-*•]\s*/, '');
+      items.push({ type: 'listNested', content, indent: indentLevel });
+    }
     // Handle bullet points with bold content (e.g., • **The Doctrine:**)
     else if (trimmed.match(/^[-*•]\s+\*\*(.+?)\*\*[:：]/)) {
       const match = trimmed.match(/^[-*•]\s+\*\*(.+?)\*\*[:：]\s*(.*)$/);
       if (match) {
-        items.push({ type: 'boldLabel', label: match[1], content: match[2] });
+        items.push({ type: 'boldBullet', label: match[1], content: match[2] });
       }
     }
     // Handle numbered items
@@ -275,7 +292,7 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
     };
     
     for (const item of grouped) {
-      if (item.type === 'list') {
+      if (item.type === 'list' || item.type === 'listNested') {
         currentList.push(item);
       } else if (item.type === 'numbered') {
         flushList();
@@ -324,6 +341,16 @@ export const PDFDocument: React.FC<PDFDocumentProps> = ({ title, content, conten
               <View key={elements.length} style={styles.boldLabelContainer}>
                 <Text style={styles.boldLabel}>{item.label}:</Text>
                 {item.content && <Text style={styles.boldLabelText}>{item.content}</Text>}
+              </View>
+            );
+            break;
+          case 'boldBullet':
+            elements.push(
+              <View key={elements.length} style={styles.boldBulletContainer}>
+                <View style={styles.boldBulletRow}>
+                  <Text style={styles.boldBulletLabel}>{item.label}:</Text>
+                  {item.content && <Text style={styles.boldBulletText}>{item.content}</Text>}
+                </View>
               </View>
             );
             break;
