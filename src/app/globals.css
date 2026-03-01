@@ -1109,3 +1109,580 @@ footer {
   margin-top: 0.75rem;
   text-align: right;
 }
+
+/* ========== ENHANCED BIBLE BROWSER ========== */
+.bible-browser {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0;
+  animation: slideDown 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.bible-browser .bible-browser-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+}
+
+.bible-browser .bible-browser-header h3 {
+  color: var(--primary);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Tabs */
+.bible-tabs {
+  display: flex;
+  gap: 0.25rem;
+  max-width: 1100px;
+  margin: 0 auto 1rem;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bible-tab {
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.bible-tab:hover {
+  color: var(--primary);
+}
+
+.bible-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 500;
+}
+
+/* Content Area */
+.bible-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Browse Tab */
+.bible-browse {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bible-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bible-select {
+  padding: 0.65rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 160px;
+}
+
+.bible-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+.verse-quick-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+}
+
+.verse-nav-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.verse-input {
+  width: 60px;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.verse-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.verse-go-btn {
+  padding: 0.4rem 0.75rem;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.verse-go-btn:hover:not(:disabled) {
+  background: var(--primary-light);
+}
+
+.verse-go-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Verse Display */
+.verse-display {
+  background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+  border-left: 4px solid var(--gold);
+  padding: 1.5rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  animation: fadeIn 0.3s ease;
+}
+
+.verse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.verse-ref {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--text-lighter);
+  transition: all 0.2s;
+  padding: 0.25rem;
+}
+
+.favorite-btn:hover,
+.favorite-btn.active {
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+
+.verse-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.verse-version {
+  font-size: 0.75rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.verse-loading {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-light);
+}
+
+/* Recent Verses */
+.recent-verses {
+  margin-top: 1rem;
+}
+
+.recent-verses h4 {
+  font-size: 0.9rem;
+  color: var(--text-lighter);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recent-item {
+  padding: 0.35rem 0.75rem;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.recent-item:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+/* Search Tab */
+.bible-search {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+.search-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.search-btn:hover {
+  background: var(--primary-light);
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.search-result-item:hover {
+  background: var(--white);
+  border-color: var(--primary-light);
+  transform: translateX(4px);
+}
+
+.result-ref {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.result-text {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.search-hint {
+  text-align: center;
+  color: var(--text-lighter);
+  padding: 2rem;
+}
+
+/* Popular Tab */
+.bible-popular h4,
+.bible-favorites h4 {
+  font-size: 0.9rem;
+  color: var(--text-lighter);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.popular-item {
+  padding: 0.75rem 0.5rem;
+  background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.popular-item:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.popular-ref {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Favorites Tab */
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.favorite-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.favorite-item:hover {
+  background: var(--white);
+  border-color: var(--primary-light);
+}
+
+.fav-ref {
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.remove-fav {
+  background: none;
+  border: none;
+  color: var(--text-lighter);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.remove-fav:hover {
+  color: #e74c3c;
+}
+
+.no-favorites {
+  text-align: center;
+  color: var(--text-lighter);
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* ========== ENHANCED UI ELEMENTS ========== */
+
+/* Card Enhancements */
+.form-section,
+.output-section,
+.history-panel,
+.bible-browser {
+  backdrop-filter: blur(10px);
+}
+
+/* Button Enhancements */
+.type-btn,
+.history-item,
+.action-btn,
+.suggestion-chip {
+  position: relative;
+  overflow: hidden;
+}
+
+.type-btn::after,
+.action-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.type-btn:active::after,
+.action-btn:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* Form Focus Enhancements */
+.form-group input:focus,
+.form-group select:focus,
+.search-input:focus,
+.bible-select:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
+}
+
+/* Smooth Hover Effects */
+.type-btn,
+.history-item,
+.suggestion-chip,
+.popular-item,
+.favorite-item {
+  transform: translateY(0);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.type-btn:hover,
+.history-item:hover,
+.suggestion-chip:hover,
+.popular-item:hover,
+.favorite-item:hover {
+  transform: translateY(-3px);
+}
+
+/* Loading State Enhancements */
+.loading-animation span {
+  animation: gentlePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Toast/Notification Style */
+.action-btn {
+  position: relative;
+}
+
+.action-btn.copied::after {
+  content: '✓';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #27ae60;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* Modal Backdrop */
+.scripture-modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-lighter);
+}
+
+/* Selection */
+::selection {
+  background: var(--gold);
+  color: var(--primary-dark);
+}
+
+/* Focus Visible */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  header,
+  .history-panel,
+  .bible-browser,
+  .output-actions,
+  footer,
+  .reading-progress {
+    display: none !important;
+  }
+  
+  .output-section {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
