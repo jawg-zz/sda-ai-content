@@ -680,6 +680,18 @@ header {
   font-size: 1.2rem;
 }
 
+.output-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.output-stats {
+  font-size: 0.75rem;
+  font-weight: normal;
+  opacity: 0.85;
+}
+
 .output-actions {
   display: flex;
   gap: 0.5rem;

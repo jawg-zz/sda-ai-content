@@ -317,6 +317,22 @@ export default function Home() {
     }
   };
 
+  const contentTypeIcons: Record<string, string> = {
+    sermon: "📖",
+    devotional: "☀️",
+    bibleStudy: "📚",
+    prayer: "🙏",
+    announcement: "📢",
+    bulletin: "📋",
+    bible: "✝️",
+  };
+
+  // Word count and reading time
+  const wordCount = output?.content 
+    ? output.content.trim().split(/\s+/).filter(w => w.length > 0).length 
+    : 0;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
   const contentTypes = [
     { id: "sermon", label: "Sermon" },
     { id: "devotional", label: "Devotional" },
@@ -335,16 +351,6 @@ export default function Home() {
     "Sabbath School",
     "Small Group",
   ];
-
-  const contentTypeIcons: Record<string, string> = {
-    sermon: "📖",
-    devotional: "☀️",
-    bibleStudy: "📚",
-    prayer: "🙏",
-    announcement: "📢",
-    bulletin: "📋",
-    bible: "✝️",
-  };
 
   const fetchSuggestions = async () => {
     setSuggestionsLoading(true);
@@ -756,7 +762,10 @@ export default function Home() {
                 />
               </div>
               <div className="output-header">
-                <h3>{output.title}</h3>
+                <div className="output-title-wrap">
+                  <h3>{output.title}</h3>
+                  <span className="output-stats">📄 {wordCount.toLocaleString()} words • ⏱️ ~{readingTime} min read</span>
+                </div>
                 <div className="output-actions">
                   <button 
                     className="action-btn" 
