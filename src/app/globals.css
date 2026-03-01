@@ -21,6 +21,222 @@
   --radius-sm: 8px;
 }
 
+:root.dark {
+  --primary: #4A7C23;
+  --primary-light: #6B9E3A;
+  --primary-dark: #2D5016;
+  --secondary: #A0522D;
+  --gold: #E8C97A;
+  --gold-light: #F0D89E;
+  --cream: #1E1E1E;
+  --cream-dark: #2A2A2A;
+  --text: #E0E0E0;
+  --text-light: #A0A0A0;
+  --text-lighter: #707070;
+  --white: #2D2D2D;
+  --border: #404040;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.1);
+}
+
+/* Dark Mode Header */
+:root.dark header {
+  background: linear-gradient(135deg, #1a3a0f 0%, #0f2208 50%, #2a5016 100%);
+}
+
+/* Dark Mode Body */
+:root.dark body {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  color: var(--text);
+}
+
+/* Dark Mode Additional Overrides */
+:root.dark .reading-progress {
+  background: rgba(255,255,255,0.1);
+}
+
+:root.dark .form-section,
+:root.dark .output-section {
+  background: var(--white);
+}
+
+:root.dark .history-panel,
+:root.dark .bible-browser {
+  background: #252525;
+}
+
+:root.dark .type-btn {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root.dark .type-btn:hover {
+  background: var(--white);
+}
+
+:root.dark .form-group input,
+:root.dark .form-group select {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root.dark .form-group input::placeholder {
+  color: var(--text-lighter);
+}
+
+:root.dark .history-item {
+  background: var(--cream);
+  border-color: var(--border);
+}
+
+:root.dark .history-item:hover {
+  background: var(--white);
+}
+
+:root.dark .clear-btn {
+  color: var(--text-lighter);
+}
+
+:root.dark .clear-btn:hover {
+  color: #ff6b6b;
+}
+
+:root.dark .toc-container {
+  background: var(--cream);
+  border-color: var(--border);
+}
+
+:root.dark .toc-link {
+  color: var(--text-light);
+}
+
+:root.dark .toc-link:hover {
+  background: var(--white);
+  color: var(--primary);
+}
+
+:root.dark .scripture-link {
+  background: linear-gradient(120deg, #3d3520 0%, #2a2515 100%);
+  color: var(--gold-light);
+}
+
+:root.dark .scripture-link:hover {
+  background: var(--gold);
+  color: var(--primary-dark);
+}
+
+:root.dark .scripture-modal {
+  background: var(--white);
+}
+
+:root.dark .modal-close {
+  color: var(--text-light);
+}
+
+:root.dark .modal-close:hover {
+  background: var(--cream);
+  color: var(--text);
+}
+
+:root.dark .votd-verse {
+  background: var(--cream);
+}
+
+:root.dark .verse-display {
+  background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+}
+
+:root.dark .suggestion-btn {
+  background: var(--cream);
+  border-color: var(--border);
+}
+
+:root.dark .suggestion-chip {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root.dark .bible-result-item,
+:root.dark .search-result-item,
+:root.dark .favorite-item {
+  background: var(--cream);
+  border-color: var(--border);
+}
+
+:root.dark .bible-search input,
+:root.dark .search-input,
+:root.dark .bible-select {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root.dark .popular-item {
+  background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+  border-color: var(--border);
+}
+
+:root.dark .refine-menu {
+  background: var(--white);
+  border-color: var(--border);
+}
+
+:root.dark .refine-option:hover {
+  background: var(--cream-dark);
+}
+
+:root.dark .recent-item {
+  background: var(--cream);
+  border-color: var(--border);
+}
+
+:root.dark .clear-draft-btn {
+  border-color: var(--border);
+  color: var(--text-lighter);
+}
+
+:root.dark .clear-draft-btn:hover {
+  background: var(--cream-dark);
+  border-color: var(--text-lighter);
+}
+
+:root.dark ::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+:root.dark ::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-lighter);
+}
+
 * {
   margin: 0;
   padding: 0;

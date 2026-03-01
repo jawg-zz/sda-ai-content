@@ -51,10 +51,12 @@ export default function Home() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
   const [refining, setRefining] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const DRAFT_KEY = "sda-content-draft";
   const TEMPLATES_KEY = "sda-content-templates";
+  const DARK_MODE_KEY = "sda-content-darkMode";
 
   useEffect(() => {
     const saved = localStorage.getItem("sda-content-history");
@@ -62,6 +64,22 @@ export default function Home() {
       setHistory(JSON.parse(saved));
     }
   }, []);
+
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem(DARK_MODE_KEY);
+    if (savedDarkMode !== null) {
+      setDarkMode(JSON.parse(savedDarkMode));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(DARK_MODE_KEY, JSON.stringify(darkMode));
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const savedTemplates = localStorage.getItem(TEMPLATES_KEY);
@@ -518,6 +536,13 @@ export default function Home() {
             onClick={() => setShowBibleBrowser(!showBibleBrowser)}
           >
             📖 Bible
+          </button>
+          <button 
+            className="dark-mode-toggle"
+            onClick={() => setDarkMode(!darkMode)}
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? "☀️" : "🌙"}
           </button>
         </div>
       </header>
