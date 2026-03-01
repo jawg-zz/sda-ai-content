@@ -20,6 +20,7 @@ interface HistoryItem {
   contentType: string;
   topic: string;
   timestamp: string;
+  tags: string[];
 }
 
 interface Template {
@@ -42,6 +43,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [activeHeading, setActiveHeading] = useState("");
@@ -224,6 +226,11 @@ export default function Home() {
   }, [loading, topic, clickedScripture, showBibleBrowser, showHistory, showShortcuts]);
 
   const saveToHistory = (data: { title: string; content: string }) => {
+    const tagsInput = prompt("Enter tags (comma-separated, optional):");
+    const tags = tagsInput 
+      ? tagsInput.split(",").map(t => t.trim()).filter(t => t.length > 0)
+      : [];
+    
     const newItem: HistoryItem = {
       id: Date.now(),
       title: data.title,
@@ -231,6 +238,7 @@ export default function Home() {
       contentType,
       topic,
       timestamp: new Date().toLocaleString(),
+      tags,
     };
     const updated = [newItem, ...history].slice(0, 10);
     setHistory(updated);
@@ -595,11 +603,31 @@ export default function Home() {
               <button className="clear-btn" onClick={clearHistory}>Clear</button>
             )}
           </div>
+          {history.length > 0 && (
+            <div className="history-search">
+              <input
+                type="text"
+                placeholder="Search by keyword or tag..."
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
+              />
+            </div>
+          )}
           {history.length === 0 ? (
             <p className="history-empty">No history yet</p>
           ) : (
             <div className="history-list">
-              {history.map((item) => (
+              {history
+                .filter((item) => {
+                  if (!historySearch) return true;
+                  const search = historySearch.toLowerCase();
+                  return (
+                    item.topic.toLowerCase().includes(search) ||
+                    item.title.toLowerCase().includes(search) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(search))
+                  );
+                })
+                .map((item) => (
                 <button
                   key={item.id}
                   className="history-item"
@@ -609,6 +637,13 @@ export default function Home() {
                   <div className="history-info">
                     <span className="history-title">{item.topic}</span>
                     <span className="history-meta">{item.timestamp}</span>
+                    {item.tags.length > 0 && (
+                      <div className="history-tags">
+                        {item.tags.map((tag, i) => (
+                          <span key={i} className="history-tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </button>
               ))}
