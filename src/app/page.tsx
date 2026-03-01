@@ -50,6 +50,7 @@ export default function Home() {
   const [hasDraft, setHasDraft] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
+  const [refining, setRefining] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const DRAFT_KEY = "sda-content-draft";
@@ -447,6 +448,48 @@ export default function Home() {
     }
   };
 
+  const refinementOptions = [
+    { id: "shorter", label: "Make Shorter" },
+    { id: "longer", label: "Make Longer" },
+    { id: "simplify", label: "Simplify Language" },
+    { id: "scripture", label: "Add More Scripture" },
+  ];
+
+  const handleRefine = async (refinement: string) => {
+    if (!topic || !output) return;
+
+    const refinementMap: Record<string, string> = {
+      shorter: "Make this content shorter",
+      longer: "Make this content longer with more details",
+      simplify: "Simplify the language for easier understanding",
+      scripture: "Add more Bible scripture references throughout",
+    };
+
+    setRefining(true);
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contentType,
+          topic: `${topic}. ${refinementMap[refinement]}`,
+          serviceTime,
+          scripture,
+          targetAudience,
+        }),
+      });
+
+      const data = await response.json();
+      setOutput(data);
+      saveToHistory(data);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setRefining(false);
+    }
+  };
+
   return (
     <div className="app-wrapper">
       <header>
@@ -718,6 +761,26 @@ export default function Home() {
                   >
                     📄 PDF
                   </button>
+                  <div className="refine-dropdown">
+                    <button 
+                      className="action-btn refine-btn"
+                      disabled={refining}
+                    >
+                      {refining ? "⏳ Refining..." : "✨ Refine"}
+                    </button>
+                    <div className="refine-menu">
+                      {refinementOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          className="refine-option"
+                          onClick={() => handleRefine(option.id)}
+                          disabled={refining}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="output-layout">

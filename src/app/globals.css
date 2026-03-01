@@ -484,6 +484,55 @@ header {
   background: rgba(255,255,255,0.3);
 }
 
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refine-dropdown {
+  position: relative;
+}
+
+.refine-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  min-width: 160px;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.refine-dropdown:hover .refine-menu {
+  display: block;
+}
+
+.refine-option {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.refine-option:hover {
+  background: var(--cream-dark);
+}
+
+.refine-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .output-content {
   padding: 1.5rem;
   white-space: pre-wrap;
